@@ -1,7 +1,17 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import { env } from '../config/env.js';
 
-const needsSsl = /sslmode=require/.test(env.databaseUrl) || (env.isProd && !/localhost|127\.0\.0\.1/.test(env.databaseUrl));
+const databaseUrl = env.databaseUrl;
+const isLocalDatabase = /localhost|127\.0\.0\.1/.test(databaseUrl);
+const isInternalRenderDatabase = /@dpg-[a-z0-9-]+-a[:/]/.test(databaseUrl) && !/\.render\.com/.test(databaseUrl);
+const explicitSsl = /sslmode=require/i.test(databaseUrl);
+const sslDisabled = /sslmode=disable/i.test(databaseUrl);
+const needsSsl = !sslDisabled && !isLocalDatabase && !isInternalRenderDatabase && (explicitSsl || env.isProd);
+
+export const databaseTls = {
+  needsSsl,
+  isInternalRenderDatabase
+};
 
 export const sequelize = new Sequelize(env.databaseUrl, {
   dialect: 'postgres',

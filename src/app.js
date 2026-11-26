@@ -10,7 +10,7 @@ import { rateLimit } from 'express-rate-limit';
 
 import { env } from './config/env.js';
 import passport from './config/passport.js';
-import { sequelize } from './db/models.js';
+import { sequelize, databaseTls } from './db/models.js';
 import { csrfProtection, requestShape, viewLocals } from './middleware/request.js';
 import { requireStudio } from './middleware/auth.js';
 import { helpers } from './lib/format.js';
@@ -106,6 +106,7 @@ app.use(
   session({
     store: new PgSession({
       conString: env.databaseUrl,
+      ...(databaseTls.isInternalRenderDatabase ? { ssl: false } : {}),
       tableName: 'session',
       createTableIfMissing: true,
       pruneSessionInterval: 60 * 15

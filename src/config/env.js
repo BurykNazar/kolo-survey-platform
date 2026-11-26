@@ -28,7 +28,7 @@ export const env = {
   databaseUrl,
   sessionSecret: sessionSecret || 'kolo-local-development-session-secret',
   jwtSecret: jwtSecret || 'kolo-local-development-jwt-secret',
-  appOrigin: (process.env.APP_ORIGIN || `http://localhost:${port}`).replace(/\/$/, ''),
+  appOrigin: (process.env.APP_ORIGIN || process.env.RENDER_EXTERNAL_URL || `http://localhost:${port}`).replace(/\/$/, ''),
   trustProxy: isProd
 };
 
