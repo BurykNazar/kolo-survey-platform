@@ -1,0 +1,156 @@
+
+.hero__art {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 520px;
+}
+
+
+.hero__disc {
+  position: absolute;
+  width: min(82%, 452px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--lime);
+}
+
+
+.hero__rings {
+  position: absolute;
+  width: min(96%, 548px);
+  aspect-ratio: 1;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  opacity: 0.85;
+}
+
+
+.hero__rings::after {
+  content: "";
+  position: absolute;
+  inset: 11%;
+  border: 1px dashed var(--line-strong);
+  border-radius: 50%;
+}
+
+
+.specimen {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 404px);
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 34px 64px -46px rgba(11, 36, 26, 0.55);
+}
+
+
+.specimen__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+
+.specimen__step {
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+
+.specimen__bar {
+  height: 3px;
+  margin-bottom: 22px;
+  background: var(--paper-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+
+.specimen__bar span {
+  display: block;
+  width: 60%;
+  height: 100%;
+  background: var(--forest);
+  border-radius: inherit;
+}
+
+
+.specimen__label {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+
+.specimen h2 {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+
+
+.specimen__scale {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-top: 20px;
+}
+
+
+.specimen__pip {
+  display: grid;
+  place-items: center;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--paper);
+  font-size: 13px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+
+.specimen__pip.is-on {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: var(--lime);
+}
+
+
+.specimen__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+
+.specimen__title {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.specimen__count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}

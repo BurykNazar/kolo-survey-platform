@@ -1,0 +1,79 @@
+<div class="stats">
+  <div class="stat">
+    <span class="stat__label">Пройдено опитувань</span>
+    <span class="stat__value">{{ overview.attempts.length }}</span>
+    <span class="stat__note">за весь час</span>
+  </div>
+  <div class="stat">
+    <span class="stat__label">Ваших відповідей</span>
+    <span class="stat__value">{{ overview.responseCount }}</span>
+    <span class="stat__note">на питання анкет</span>
+  </div>
+  <div class="stat">
+    <span class="stat__label">Активних зараз</span>
+    <span class="stat__value">{{ activeSurveys.length }}</span>
+    <span class="stat__note">можна долучитися</span>
+  </div>
+  <div class="stat">
+    <span class="stat__label">Остання участь</span>
+    <span class="stat__value">{{ overview.attempts[0].answeredAt | formatShortDate if overview.attempts.length else '—' }}</span>
+    <span class="stat__note">{{ overview.attempts[0].surveyTitle | truncate(26) if overview.attempts.length else 'Ще немає відповідей' }}</span>
+  </div>
+</div>
+
+<div class="overview-grid">
+  <div class="stack">
+    <section class="panel">
+      <div class="panel__head">
+        <h2>Ваші відповіді</h2>
+        <a class="link" href="/studio/responses">Усі {{ icon('arrow-right', 13) }}</a>
+      </div>
+      <div class="mini-list">
+        {% for attempt in overview.attempts %}
+          {% if loop.index <= 6 %}
+            <a class="mini-row" href="/studio/responses">
+              <div class="mini-row__main">
+                <span class="mini-row__title">{{ attempt.surveyTitle }}</span>
+                <span class="mini-row__meta">{{ attempt.answers }} {{ attempt.answers | responseWord }} · {{ attempt.answeredAt | formatDateTime }}</span>
+              </div>
+              <span class="mini-row__count">{{ icon('arrow-right', 15) }}</span>
+            </a>
+          {% endif %}
+        {% else %}
+          <div class="empty-state">
+            <span class="empty-state__mark">{{ icon('inbox', 24) }}</span>
+            <h3>Ви ще не проходили опитувань</h3>
+            <p>Оберіть тему в каталозі — більшість анкет займає до п’яти хвилин.</p>
+            <a class="btn btn--primary btn--sm" href="/surveys">До каталогу</a>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+
+  <div class="stack">
+    <section class="panel">
+      <div class="panel__head">
+        <h2>Активні опитування</h2>
+      </div>
+      <div class="mini-list">
+        {% for survey in activeSurveys %}
+          <a class="mini-row" href="/surveys/{{ survey.id }}">
+            <div class="mini-row__main">
+              <span class="mini-row__title">{{ survey.title }}</span>
+              <span class="mini-row__meta">{{ survey.category.name if survey.category else 'Без теми' }} · {{ counts[survey.id] }} {{ counts[survey.id] | responseWord }}</span>
+            </div>
+            <span class="mini-row__count">{{ icon('arrow-up-right', 15) }}</span>
+          </a>
+        {% else %}
+          <div class="row-empty">Зараз немає активних опитувань.</div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="panel panel--pad">
+      <h2 style="font-size: 15px;">Про ваші дані</h2>
+      <p class="small muted" style="margin-top: 8px;">Відповіді бачить автор опитування. Якщо анкета анонімна, ваше ім’я та пошта не прикріплюються до відповідей — навіть для адміністратора.</p>
+    </section>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { chromium } from 'playwright-core';
+import { login } from './lib/flow-helpers.mjs';
 
 const BASE = 'http://localhost:3000';
 const CHROME = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
@@ -34,22 +35,9 @@ const context = await browser.newContext({ viewport: { width: 1440, height: 900 
 const page = await context.newPage();
 page.setDefaultTimeout(12000);
 
-async function login(account) {
-  await page.goto(`${BASE}/login`);
-  await page.fill('#email', account[0]);
-  await page.fill('#password', account[1].password);
-  await page.click('form[action="/login"] button[type="submit"]');
-  await page.waitForURL('**/studio');
-}
-
-async function toast() {
-  await page.waitForSelector('.toast', { state: 'visible' });
-  return (await page.locator('.toast').last().textContent())?.trim();
-}
-
 try {
   // 1. Вхід
-  await login(creator);
+  await login(page, BASE, creator);
   check(page.url().endsWith('/studio'), 'вхід дослідника');
 
   // 2. Створення опитування через модальне вікно
@@ -150,7 +138,7 @@ try {
   await page.click('details.user-menu summary');
   await page.click('form[action="/logout"] button');
   await page.waitForURL(`${BASE}/`);
-  await login(admin);
+  await login(page, BASE, admin);
 
   await page.goto(`${BASE}/studio/categories`);
   await page.click('button[data-open-dialog="categoryDialog"]');

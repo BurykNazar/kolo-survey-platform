@@ -46,12 +46,38 @@ npm run db:reset
 | `DATABASE_URL` | рядок підключення Neon Postgres, наприклад `postgresql://…?sslmode=require` |
 | `SESSION_SECRET` | секрет підпису сесій, ≥ 32 символи |
 | `JWT_SECRET` | секрет JWT, ≥ 32 символи |
-| `APP_ORIGIN` | публічна адреса застосунку |
+| `APP_ORIGIN` | публічна адреса застосунку (на Render підхоплюється `RENDER_EXTERNAL_URL`) |
 | `PORT` | порт (за замовчуванням 3000) |
 | `NODE_ENV` | `production` на Render |
 
 Локальна база не є частиною застосунку: код читає лише `DATABASE_URL`. Для розробки
 можна вказати локальний PostgreSQL або окрему гілку Neon.
+
+## Структура
+
+```
+src/
+  controllers/studio/     огляд, опитування, конструктор, відповіді, категорії, люди, профіль
+  controllers/api/        JWT API за ресурсами
+  lib/validation/         правила валідації; lib/validation.js — тонкий реекспорт
+  public/css/kolo.css     точка входу з @import; модулі в public/css/parts/
+  public/js/app.js        точка входу; модулі поруч (core, selects, forms, builder, …)
+  views/pages, partials   сторінки та винесені фрагменти
+scripts/
+  data/                   демо-дані: категорії, люди, по одному файлу на опитування
+  lib/                    спільні хелпери для сіду та тестів
+```
+
+Кожен файл у `src/` і `scripts/` — не більше **200 рядків**. Це стосується CSS, JS,
+Nunjucks, конфігурацій і тестів; виняток — `README.md` і згенерований
+`package-lock.json`. Перевірка:
+
+```powershell
+npm run check:sizes
+```
+
+CSS не збирається бандлером: `kolo.css` лише імпортує частини. JS — нативні ES-модулі,
+які підключає `app.js`.
 
 ## Ролі
 
@@ -130,6 +156,8 @@ Free Postgres на Render має обмежений термін життя, т�
 | `npm run db:reset` | перестворити схему й демо-дані |
 | `npm run test:flows` | наскрізні сценарії в headless Chrome |
 | `npm run test:api` | перевірка JWT API та CSRF |
+| `npm run test:users` | реєстрація, зміна пароля, учасник, гість |
+| `npm run check:sizes` | перевірка ліміту 200 рядків на файл |
 | `npm run shoot` | скріншоти сторінок у `shots/` |
 
 Тестові сценарії потребують запущеного сервера та `credentials.local.md`.

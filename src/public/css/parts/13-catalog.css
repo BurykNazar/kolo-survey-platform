@@ -1,0 +1,165 @@
+
+.search .icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+}
+
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding: 32px 0 24px;
+}
+
+
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  padding: 72px 24px;
+  text-align: center;
+}
+
+
+.empty-state__mark {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  color: var(--forest);
+}
+
+
+.empty-state h2,
+.empty-state h3 {
+  font-size: 19px;
+}
+
+
+.empty-state p {
+  max-width: 42ch;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+
+/* ============================================================
+   Auth
+   ============================================================ */
+
+.auth {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 100svh;
+  background: var(--paper);
+}
+
+
+.auth__side {
+  display: flex;
+  flex-direction: column;
+  padding: 32px clamp(24px, 5vw, 64px) 48px;
+}
+
+
+.auth__side .brand {
+  align-self: flex-start;
+}
+
+
+.auth__body {
+  width: 100%;
+  max-width: 380px;
+  margin: auto;
+  padding: 48px 0;
+}
+
+
+.auth__body h1 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 34px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+
+.auth__body > p {
+  margin-top: 12px;
+  font-size: 14.5px;
+  color: var(--muted);
+}
+
+
+.auth__form {
+  display: grid;
+  gap: 16px;
+  margin-top: 30px;
+}
+
+
+.auth__switch {
+  margin-top: 22px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+
+.auth__switch a {
+  color: var(--ink);
+  font-weight: 500;
+  border-bottom: 1px solid var(--line-strong);
+}
+
+
+.auth__switch a:hover {
+  border-color: var(--forest);
+}
+
+
+.auth__aside {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  background: var(--forest-deep);
+  overflow: hidden;
+}
+
+
+.auth__aside::before {
+  content: "";
+  position: absolute;
+  width: 560px;
+  height: 560px;
+  border: 1px solid rgba(201, 240, 92, 0.18);
+  border-radius: 50%;
+}
+
+
+.auth__aside::after {
+  content: "";
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border: 1px dashed rgba(201, 240, 92, 0.14);
+  border-radius: 50%;
+}
+
+
+.auth__card {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 420px);
+  padding: 26px;
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(251, 251, 246, 0.1);
+}

@@ -1,0 +1,165 @@
+
+.user-menu__panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 12px);
+  width: 268px;
+  padding: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 0 24px 48px -28px rgba(11, 36, 26, 0.5);
+  animation: pop-in 160ms var(--ease-out);
+  z-index: 80;
+}
+
+
+.user-menu__id {
+  display: grid;
+  gap: 2px;
+  padding: 12px 12px 14px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 6px;
+}
+
+
+.user-menu__id strong {
+  font-size: 14px;
+  color: var(--ink);
+}
+
+
+.user-menu__id span {
+  font-size: 12px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.user-menu__id .chip {
+  justify-self: start;
+  margin-top: 6px;
+}
+
+
+.user-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  font-size: 14px;
+  color: var(--ink-soft);
+  text-align: left;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+
+.user-menu__item:hover {
+  background: var(--paper-2);
+  color: var(--ink);
+}
+
+
+.user-menu__item--button {
+  font-weight: 400;
+}
+
+
+/* ============================================================
+   Buttons, chips, links
+   ============================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms var(--ease-out);
+}
+
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+
+.btn--primary {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: var(--paper);
+}
+
+
+.btn--primary:hover {
+  background: var(--forest-deep);
+  border-color: var(--forest-deep);
+}
+
+
+.btn--lime {
+  background: var(--lime);
+  border-color: var(--lime);
+  color: var(--forest-deep);
+}
+
+
+.btn--lime:hover {
+  background: #d8f985;
+  border-color: #d8f985;
+}
+
+
+.btn--quiet {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+
+.btn--quiet:hover {
+  border-color: var(--forest);
+  background: var(--surface);
+}
+
+
+.btn--ghost {
+  padding: 0 10px;
+  color: var(--ink);
+}
+
+
+.btn--ghost:hover {
+  color: var(--forest);
+}
+
+
+.btn--danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+
+
+.btn--danger:hover {
+  background: #8f3623;
+  border-color: #8f3623;
+}

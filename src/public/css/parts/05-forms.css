@@ -1,0 +1,165 @@
+
+.field__label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+
+.field__hint {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+
+.field__error {
+  display: none;
+  font-size: 12.5px;
+  color: var(--danger);
+  line-height: 1.45;
+}
+
+
+.field.is-invalid .field__error {
+  display: block;
+}
+
+
+.field.is-invalid .input,
+.field.is-invalid .textarea,
+.field.is-invalid .select__button,
+.field.is-invalid .date__input {
+  border-color: var(--danger);
+  background: #fdf7f5;
+}
+
+
+.input,
+.textarea,
+.select__button,
+.date__input {
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.4;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+
+.textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+
+.input::placeholder,
+.textarea::placeholder {
+  color: #8a958d;
+}
+
+
+.input:hover,
+.textarea:hover,
+.select__button:hover,
+.date__input:hover {
+  border-color: #b3bca8;
+}
+
+
+.input:focus,
+.textarea:focus,
+.select__button:focus-visible,
+.date__input:focus {
+  outline: none;
+  border-color: var(--forest);
+  box-shadow: 0 0 0 3px rgba(20, 58, 44, 0.12);
+}
+
+
+.input--with-action {
+  padding-right: 46px;
+}
+
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+
+.form-grid .field--wide {
+  grid-column: 1 / -1;
+}
+
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+
+.form-actions--end {
+  justify-content: flex-end;
+}
+
+
+.form-note {
+  margin-top: 12px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+
+.form-error {
+  display: none;
+  margin-top: 14px;
+  padding: 11px 14px;
+  border: 1px solid #e7c9bf;
+  border-radius: 12px;
+  background: var(--danger-soft);
+  color: #7c2f1e;
+  font-size: 13px;
+}
+
+
+.form-error.is-visible {
+  display: block;
+}
+
+
+/* Custom select */
+.select {
+  position: relative;
+  min-width: 0;
+}
+
+
+.select__native {
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 15px;
+}
+
+
+.js .select .select__native {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}

@@ -18,6 +18,7 @@
     "test:api": "node scripts/test-api.mjs",
     "test:users": "node scripts/test-user-flows.mjs",
     "shoot": "node scripts/shoot.mjs",
+    "check:sizes": "node scripts/check-file-sizes.mjs",
     "check": "node --check src/server.js"
   },
   "author": "Бурик Назар",

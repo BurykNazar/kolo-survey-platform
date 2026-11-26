@@ -1,0 +1,163 @@
+
+.select__button {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  text-align: left;
+}
+
+
+.js .select__button {
+  display: flex;
+}
+
+
+.select__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.select__chevron {
+  color: var(--muted);
+  transition: transform 180ms var(--ease-out);
+}
+
+
+.select[data-open="true"] .select__chevron {
+  transform: rotate(180deg);
+}
+
+
+.select__popover {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 45;
+  max-height: 264px;
+  overflow: auto;
+  padding: 6px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 22px 44px -26px rgba(11, 36, 26, 0.5);
+  transform-origin: top center;
+  animation: pop-in 150ms var(--ease-out);
+}
+
+
+.select__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 11px;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  font-size: 14px;
+  text-align: left;
+  color: var(--ink-soft);
+}
+
+
+.select__option:hover {
+  background: var(--paper-2);
+  color: var(--ink);
+}
+
+
+.select__option[aria-selected="true"] {
+  background: var(--forest);
+  color: var(--paper);
+}
+
+
+/* Date picker */
+.date {
+  position: relative;
+}
+
+
+.date__input {
+  padding-right: 48px;
+  cursor: pointer;
+}
+
+
+.date__button {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--muted);
+}
+
+
+.date__button:hover {
+  background: var(--paper-2);
+  color: var(--ink);
+}
+
+
+.calendar {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 45;
+  width: 296px;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 24px 48px -28px rgba(11, 36, 26, 0.5);
+  animation: pop-in 150ms var(--ease-out);
+}
+
+
+.calendar__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+
+.calendar__month {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+
+.calendar__nav {
+  display: flex;
+  gap: 4px;
+}
+
+
+.calendar__week,
+.calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+
+.calendar__week span {
+  padding: 4px 0;
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+}

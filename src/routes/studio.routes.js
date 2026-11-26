@@ -27,7 +27,7 @@ import {
   getProfile,
   updateProfile,
   changePassword
-} from '../controllers/studio.controller.js';
+} from '../controllers/studio/index.js';
 
 const router = Router();
 const teamOnly = requireRole('admin', 'creator');

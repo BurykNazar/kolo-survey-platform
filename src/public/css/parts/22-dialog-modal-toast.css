@@ -1,0 +1,166 @@
+
+.modal__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+
+.modal__danger {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-top: 16px;
+  border: 1px solid #e7c9bf;
+  border-radius: 12px;
+  background: var(--danger-soft);
+  color: #7c2f1e;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+
+.modal__danger .icon {
+  flex: none;
+  margin-top: 1px;
+}
+
+
+.modal--wide {
+  width: min(680px, calc(100vw - 32px));
+}
+
+
+.toast-stack {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 120;
+  display: grid;
+  gap: 8px;
+  max-width: min(400px, calc(100vw - 32px));
+}
+
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 12px 12px 16px;
+  border-radius: 14px;
+  background: var(--forest-deep);
+  color: var(--paper);
+  font-size: 13px;
+  line-height: 1.5;
+  box-shadow: 0 0 0 1px rgba(201, 240, 92, 0.22), 0 18px 36px -22px rgba(11, 36, 26, 0.65);
+  animation: toast-in 260ms var(--ease-out);
+}
+
+
+.toast--err {
+  box-shadow: 0 0 0 1px rgba(240, 165, 143, 0.32), 0 18px 36px -22px rgba(11, 36, 26, 0.65);
+}
+
+
+.toast .icon {
+  color: var(--lime);
+  margin-top: 1px;
+}
+
+
+.toast span {
+  flex: 1;
+}
+
+
+.toast--err .icon {
+  color: #f0a58f;
+}
+
+
+.toast.is-leaving {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+
+.toast__close {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: rgba(251, 251, 246, 0.1);
+  color: inherit;
+  flex: none;
+}
+
+
+.toast__close:hover {
+  background: rgba(251, 251, 246, 0.2);
+}
+
+
+/* ============================================================
+   Survey runner
+   ============================================================ */
+
+.runner {
+  padding: 32px 0 90px;
+}
+
+
+.runner-progress {
+  position: sticky;
+  top: var(--head-h);
+  z-index: 30;
+  height: 3px;
+  background: var(--paper-2);
+  margin-bottom: -3px;
+}
+
+
+.runner-progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--forest);
+  transition: width 320ms var(--ease-out);
+}
+
+
+.runner__head {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 28px 0 30px;
+}
+
+
+.runner__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+
+.runner__head h1 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.8vw, 44px);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+
+.runner__desc {
+  max-width: 62ch;
+  margin-top: 16px;
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}

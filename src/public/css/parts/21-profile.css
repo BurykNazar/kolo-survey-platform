@@ -1,0 +1,167 @@
+
+/* ============================================================
+   Profile
+   ============================================================ */
+
+.profile {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+
+.profile__card {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+
+.profile__avatar {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: var(--forest);
+  color: var(--lime);
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+}
+
+
+.profile__name {
+  margin-top: 6px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+
+.profile__email {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+
+.profile__facts {
+  display: grid;
+  width: 100%;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+
+.profile__fact {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+
+.profile__fact strong {
+  color: var(--ink);
+  font-weight: 500;
+  text-align: right;
+}
+
+
+.profile__forms {
+  display: grid;
+  gap: 18px;
+}
+
+
+/* ============================================================
+   Dialog / modal / toast
+   ============================================================ */
+
+dialog {
+  color: inherit;
+}
+
+
+dialog::backdrop {
+  background: rgba(9, 28, 20, 0.42);
+}
+
+
+.modal {
+  width: min(580px, calc(100vw - 32px));
+  max-height: calc(100svh - 48px);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  opacity: 0;
+  transform: translateY(10px) scale(0.985);
+  transition:
+    opacity 200ms var(--ease-out),
+    transform 240ms var(--ease-out),
+    overlay 240ms allow-discrete,
+    display 240ms allow-discrete;
+}
+
+
+.modal[open] {
+  opacity: 1;
+  transform: none;
+}
+
+
+@starting-style {
+  .modal[open] {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+}
+
+
+.modal__panel {
+  max-height: calc(100svh - 48px);
+  overflow: auto;
+  padding: 26px 28px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+}
+
+
+.modal__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+
+.modal__head h2 {
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+}
+
+
+.modal__sub {
+  margin: 4px 0 20px;
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+
+.modal__body {
+  display: grid;
+  gap: 15px;
+}

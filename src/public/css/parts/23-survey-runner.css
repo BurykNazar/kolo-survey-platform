@@ -1,0 +1,168 @@
+
+.runner__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+
+.runner__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.runner__form {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+
+.q {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+  padding: 26px 26px 22px;
+  margin-bottom: 12px;
+  scroll-margin-top: 100px;
+  transition: border-color 180ms ease, background-color 180ms ease;
+}
+
+
+.q.is-invalid {
+  border-color: var(--danger);
+  background: #fdf9f7;
+}
+
+
+.q__head {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+
+.q__num {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  flex: none;
+  margin-top: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+
+.q__main {
+  flex: 1;
+  min-width: 0;
+}
+
+
+.q__title {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+
+.q__req {
+  color: var(--forest);
+  margin-left: 4px;
+}
+
+
+.q__hint {
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+
+.q__body {
+  margin-top: 18px;
+}
+
+
+.q__error {
+  display: none;
+  margin-top: 10px;
+  font-size: 12.5px;
+  color: var(--danger);
+}
+
+
+.q.is-invalid .q__error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.choice-list {
+  display: grid;
+  gap: 8px;
+}
+
+
+.choice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--paper);
+  font-size: 14.5px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease;
+}
+
+
+.choice:hover {
+  border-color: var(--forest);
+  background: var(--surface);
+}
+
+
+.choice:has(input:checked) {
+  border-color: var(--forest);
+  background: var(--lime-soft);
+  color: var(--forest-deep);
+}
+
+
+.choice input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+
+.choice__dot {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--surface);
+  flex: none;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}

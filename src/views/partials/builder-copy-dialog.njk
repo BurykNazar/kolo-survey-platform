@@ -1,0 +1,35 @@
+{% if canCopy %}
+  <dialog class="modal" id="copySurveyDialog">
+    <div class="modal__panel">
+      <div class="modal__head">
+        <div><h2>Копіювати опитування</h2></div>
+        <button class="icon-btn" type="button" data-close-dialog aria-label="Закрити">{{ icon('x', 18) }}</button>
+      </div>
+      <p class="modal__sub">Копія отримає питання й варіанти, але не відповіді. Новий автор зможе змінювати її незалежно.</p>
+      <form method="post" action="/studio/surveys/{{ survey.id }}/copy" data-ajax-form data-redirect-on-success novalidate>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        <div class="modal__body">
+          <div class="field" data-field="creator_id">
+            <label class="field__label" for="copyCreator">Новий автор</label>
+            <select class="select__native" id="copyCreator" name="creator_id" data-select>
+              {% for creator in creators %}
+                <option value="{{ creator.id }}">{{ creator.full_name }}</option>
+              {% endfor %}
+            </select>
+            <p class="field__error" data-error></p>
+          </div>
+          <div class="field" data-field="title">
+            <label class="field__label" for="copyTitle">Назва копії</label>
+            <input class="input" id="copyTitle" name="title" type="text" value="Копія — {{ survey.title }}" maxlength="255">
+            <p class="field__error" data-error></p>
+          </div>
+          <div class="form-error" data-form-error></div>
+        </div>
+        <div class="modal__foot">
+          <button class="btn btn--quiet" type="button" data-close-dialog>Скасувати</button>
+          <button class="btn btn--primary" type="submit"><span class="btn__label">Створити копію</span></button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+{% endif %}

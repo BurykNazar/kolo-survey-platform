@@ -1,0 +1,157 @@
+
+.drawer__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+
+.drawer__head h2 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+}
+
+
+.drawer__meta {
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+
+.drawer__body {
+  display: grid;
+  gap: 0;
+  margin-top: 8px;
+}
+
+
+.answer {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+
+.answer:last-child {
+  border-bottom: 0;
+}
+
+
+.answer__q {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+
+.answer__type {
+  margin-left: 6px;
+  font-size: 10.5px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+
+.answer__a {
+  margin-top: 8px;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+
+.answer__value {
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: var(--paper-2);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+
+.answer__value--text {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  line-height: 1.55;
+}
+
+
+/* ============================================================
+   Data table (categories, people)
+   ============================================================ */
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+
+.data-table th {
+  padding: 11px 18px;
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--muted);
+  background: #f6f7f1;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+
+.data-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+
+.data-table tr:last-child td {
+  border-bottom: 0;
+}
+
+
+.data-table tbody tr {
+  transition: background-color 150ms ease;
+}
+
+
+.data-table tbody tr:hover {
+  background: #fdfdf9;
+}
+
+
+.data-table__name {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+
+.data-table__sub {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+
+.data-table__actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+
+.table-wrap {
+  overflow-x: auto;
+}

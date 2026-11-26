@@ -27,7 +27,7 @@ import {
   apiDeleteOption,
   apiListResults,
   apiDeleteResult
-} from '../controllers/api.controller.js';
+} from '../controllers/api/index.js';
 
 const router = Router();
 
