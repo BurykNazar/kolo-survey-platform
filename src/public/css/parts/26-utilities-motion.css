@@ -63,7 +63,6 @@
   .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .band--how { grid-template-columns: 1fr; gap: 32px; }
   .band__actions { justify-content: flex-start; }
-  .band__actions { justify-content: flex-start; }
   .site-foot__top { grid-template-columns: 1fr; gap: 36px; }
 
   .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }

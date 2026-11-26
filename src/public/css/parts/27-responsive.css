@@ -2,8 +2,7 @@
 @media (max-width: 720px) {
   .wrap { padding: 0 18px; }
   .section { padding: 64px 0; }
-  .hero__art { flex-direction: column; gap: 16px; }
-  .hero__stamp { position: static; }
+  .hero__art { display: none; }
   .cards-3,
   .catalog-grid { grid-template-columns: 1fr; }
   .section__head { flex-direction: column; align-items: flex-start; gap: 18px; }
@@ -87,7 +86,6 @@
   .hero h1 { font-size: 40px; }
   .hero__lead { font-size: 16px; }
   .hero__actions .btn { width: 100%; }
-  .hero__art { min-height: 400px; }
   .specimen { padding: 20px; }
   .stats { grid-template-columns: 1fr 1fr; }
   .stat { padding: 18px 16px; }

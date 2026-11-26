@@ -1,4 +1,4 @@
-import { showToast } from './core.js';
+import { openDialog, showToast } from './core.js';
 
 /* ── Copy survey ────────────────────────────────────────────────────────── */
 

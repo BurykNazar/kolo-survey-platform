@@ -11,7 +11,7 @@ function walk(directory) {
     const full = path.join(directory, entry.name);
     if (IGNORED.test(full)) continue;
     if (entry.isDirectory()) walk(full);
-    else if (/\.(js|mjs|css|njk|json|ya?ml)$/.test(entry.name)) files.push(full);
+    else if (/\.(js|mjs|css|njk|json|ya?ml|svg)$/.test(entry.name)) files.push(full);
   }
 }
 
