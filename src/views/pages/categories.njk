@@ -1,0 +1,71 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="wrap page">
+  <header class="page-head">
+    <div>
+      <p class="page-head__eyebrow">{{ icon('folder', 14) }} Адміністрування</p>
+      <h1>Категорії</h1>
+      <p>Теми, за якими учасники фільтрують каталог. Назва й код мають бути унікальними, а код — латиницею.</p>
+    </div>
+    <div class="page-head__actions">
+      <button class="btn btn--primary" type="button" data-open-dialog="categoryDialog" data-mode="create">{{ icon('plus', 16) }} Нова категорія</button>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Назва</th>
+            <th>Код</th>
+            <th>Активні опитування</th>
+            <th style="text-align:right;">Дії</th>
+          </tr>
+        </thead>
+        <tbody id="category-rows">
+          {% include "partials/category-rows.njk" %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<dialog class="modal" id="categoryDialog">
+  <div class="modal__panel">
+    <div class="modal__head">
+      <div><h2 data-category-title>Нова категорія</h2></div>
+      <button class="icon-btn" type="button" data-close-dialog aria-label="Закрити">{{ icon('x', 18) }}</button>
+    </div>
+    <p class="modal__sub">Коротка назва для каталогу та код латиницею для адреси фільтра.</p>
+
+    <form method="post" action="/studio/categories" data-ajax-form data-category-form data-region="#category-rows" novalidate>
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+      <div class="modal__body">
+        <div class="field" data-field="name">
+          <label class="field__label" for="categoryName">Назва</label>
+          <input class="input" id="categoryName" name="name" type="text" maxlength="100" placeholder="Наприклад, Партнерства">
+          <p class="field__error" data-error></p>
+        </div>
+        <div class="field" data-field="code">
+          <label class="field__label" for="categoryCode">Код</label>
+          <input class="input" id="categoryCode" name="code" type="text" maxlength="40" placeholder="partnerships" data-slug-target>
+          <p class="field__hint">Латиниця, цифри та дефіси. Використовується в адресі фільтра.</p>
+          <p class="field__error" data-error></p>
+        </div>
+        <div class="field" data-field="description">
+          <label class="field__label" for="categoryDescription">Опис <span class="muted">(необов’язково)</span></label>
+          <textarea class="textarea" id="categoryDescription" name="description" rows="3" maxlength="500" placeholder="Що об’єднує опитування цієї теми"></textarea>
+          <p class="field__error" data-error></p>
+        </div>
+        <div class="form-error" data-form-error></div>
+      </div>
+      <div class="modal__foot">
+        <button class="btn btn--quiet" type="button" data-close-dialog>Скасувати</button>
+        <button class="btn btn--primary" type="submit"><span class="btn__label">Зберегти</span></button>
+      </div>
+    </form>
+  </div>
+</dialog>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% from "partials/mark.njk" import mark %}
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="site-foot__top">
+      <div class="site-foot__brand">
+        <a class="brand brand--foot" href="/">
+          {{ mark(30) }}
+          <span class="brand__name">kolo</span>
+        </a>
+        <p>Опитування, які повертаються з відповідями. Для команд, клієнтів і громад.</p>
+      </div>
+
+      <div class="site-foot__cols">
+        <div class="site-foot__col">
+          <h3>Продукт</h3>
+          <a href="/surveys">Каталог опитувань</a>
+          <a href="/studio">Кабінет</a>
+          <a href="/studio/profile">Профіль</a>
+        </div>
+        <div class="site-foot__col">
+          <h3>Теми</h3>
+          <a href="/surveys?category=product">Продукт</a>
+          <a href="/surveys?category=team">Команда</a>
+          <a href="/surveys?category=community">Громада</a>
+        </div>
+        <div class="site-foot__col">
+          <h3>Kolo</h3>
+          <a href="/#how">Як це працює</a>
+          <a href="mailto:hello@kolo.example">hello@kolo.example</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-foot__bottom">
+      <span>© {{ year }} Kolo</span>
+      <span>Зроблено в Україні</span>
+      <span>Відповіді належать авторам опитувань</span>
+    </div>
+  </div>
+</footer>

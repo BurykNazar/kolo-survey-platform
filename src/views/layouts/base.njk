@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="uk" class="no-js">
+<head>
+  {% include "partials/head.njk" %}
+  <script src="/js/boot.js"></script>
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block bodyClass %}{% endblock %}">
+  <a class="skip-link" href="#main">Перейти до вмісту</a>
+  {% block header %}{% include "partials/nav.njk" %}{% endblock %}
+
+  <main id="main" class="{% block mainClass %}main{% endblock %}">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block footer %}{% include "partials/footer.njk" %}{% endblock %}
+
+  <div class="toast-stack" id="toasts" aria-live="polite" aria-atomic="false">
+    {% if flash.ok %}
+      <div class="toast toast--ok" data-toast>{{ icon('check-circle', 18) }}<span>{{ flash.ok }}</span><button type="button" class="toast__close" data-toast-close aria-label="Закрити">{{ icon('x', 15) }}</button></div>
+    {% endif %}
+    {% if flash.error %}
+      <div class="toast toast--err" data-toast>{{ icon('alert', 18) }}<span>{{ flash.error }}</span><button type="button" class="toast__close" data-toast-close aria-label="Закрити">{{ icon('x', 15) }}</button></div>
+    {% endif %}
+  </div>
+
+  <dialog class="modal" id="confirmDialog">
+    <div class="modal__panel">
+      <div class="modal__head">
+        <div><h2 data-confirm-title>Підтвердіть дію</h2></div>
+        <button class="icon-btn" type="button" data-close-dialog aria-label="Закрити">{{ icon('x', 18) }}</button>
+      </div>
+      <p class="modal__sub" data-confirm-text></p>
+      <div class="modal__danger">
+        {{ icon('alert', 18) }}
+        <span data-confirm-note>Цю дію не можна скасувати.</span>
+      </div>
+      <div class="form-error" data-confirm-error></div>
+      <div class="modal__foot">
+        <button class="btn btn--quiet" type="button" data-close-dialog>Скасувати</button>
+        <button class="btn btn--danger" type="button" data-confirm-ok><span class="btn__label">Підтвердити</span></button>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="/js/app.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

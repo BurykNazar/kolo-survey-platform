@@ -1,0 +1,104 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="wrap page">
+  <header class="page-head">
+    <div>
+      <p class="page-head__eyebrow">{{ icon('user', 14) }} Кабінет</p>
+      <h1>Профіль</h1>
+      <p>Ім’я й контакти бачить автор опитування, якщо ви відповідали не анонімно. Анонімні відповіді не прикріплюються до профілю.</p>
+    </div>
+    <div class="page-head__actions">
+      <a class="btn btn--quiet" href="{{ '/studio' if profileUser.role != 'visitor' else '/surveys' }}">{{ icon('arrow-left', 16) }} {{ 'До огляду' if profileUser.role != 'visitor' else 'До каталогу' }}</a>
+    </div>
+  </header>
+
+  <div class="profile">
+    <aside class="panel profile__card">
+      <span class="profile__avatar">{{ profileUser.full_name | initials }}</span>
+      <div>
+        <div class="profile__name">{{ profileUser.full_name }}</div>
+        <div class="profile__email">{{ profileUser.email }}</div>
+      </div>
+      <span class="chip chip--soft">{{ profileUser.role | roleLabel }}</span>
+
+      <div class="profile__facts">
+        <div class="profile__fact"><span>У Kolo з</span><strong>{{ profileUser.created_at | formatDate }}</strong></div>
+        <div class="profile__fact"><span>Заклад</span><strong>{{ profileUser.institution or '—' }}</strong></div>
+        <div class="profile__fact"><span>Телефон</span><strong>{{ profileUser.phone or '—' }}</strong></div>
+        {% if profileUser.role == 'visitor' %}
+          <div class="profile__fact"><span>Пройдено анкет</span><strong>{{ ownResponses }}</strong></div>
+        {% else %}
+          <div class="profile__fact"><span>Опитувань</span><strong>{{ surveyCount }}</strong></div>
+          <div class="profile__fact"><span>Відповідей</span><strong>{{ totals.attempts }}</strong></div>
+        {% endif %}
+      </div>
+    </aside>
+
+    <div class="profile__forms">
+      <section class="panel">
+        <div class="panel__head"><h2>Особисті дані</h2></div>
+        <div class="panel__body">
+          <form method="post" action="/studio/profile" data-ajax-form data-preserve="true" novalidate>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+            <div class="form-grid">
+              <div class="field field--wide" data-field="full_name">
+                <label class="field__label" for="profileName">Ім’я та прізвище</label>
+                <input class="input" id="profileName" name="full_name" type="text" value="{{ profileUser.full_name }}" maxlength="150">
+                <p class="field__error" data-error></p>
+              </div>
+              <div class="field" data-field="institution">
+                <label class="field__label" for="profileInstitution">Заклад</label>
+                <input class="input" id="profileInstitution" name="institution" type="text" value="{{ profileUser.institution or '' }}" maxlength="150">
+                <p class="field__error" data-error></p>
+              </div>
+              <div class="field" data-field="phone">
+                <label class="field__label" for="profilePhone">Телефон</label>
+                <input class="input" id="profilePhone" name="phone" type="tel" value="{{ profileUser.phone or '' }}" maxlength="30">
+                <p class="field__error" data-error></p>
+              </div>
+            </div>
+            <div class="form-error" data-form-error></div>
+            <div class="form-actions">
+              <button class="btn btn--primary" type="submit"><span class="btn__label">Зберегти дані</span></button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head"><h2>Пароль</h2></div>
+        <div class="panel__body">
+          <form method="post" action="/studio/profile/password" data-ajax-form data-preserve="true" novalidate>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+            <div class="form-grid">
+              <div class="field field--wide" data-field="current_password">
+                <label class="field__label" for="currentPassword">Поточний пароль</label>
+                <div class="password">
+                  <input class="input" id="currentPassword" name="current_password" type="password" autocomplete="current-password">
+                  <button class="password__toggle" type="button" data-password-toggle aria-label="Показати пароль">{{ icon('eye', 17) }}</button>
+                </div>
+                <p class="field__error" data-error></p>
+              </div>
+              <div class="field" data-field="new_password">
+                <label class="field__label" for="newPassword">Новий пароль</label>
+                <input class="input" id="newPassword" name="new_password" type="password" autocomplete="new-password" placeholder="Щонайменше 10 символів">
+                <p class="field__error" data-error></p>
+              </div>
+              <div class="field" data-field="repeat_password">
+                <label class="field__label" for="repeatPassword">Повторіть новий пароль</label>
+                <input class="input" id="repeatPassword" name="repeat_password" type="password" autocomplete="new-password">
+                <p class="field__error" data-error></p>
+              </div>
+            </div>
+            <div class="form-error" data-form-error></div>
+            <div class="form-actions">
+              <button class="btn btn--primary" type="submit"><span class="btn__label">Оновити пароль</span></button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+{% endblock %}

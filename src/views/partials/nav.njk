@@ -1,0 +1,64 @@
+{% from "partials/mark.njk" import mark %}
+<header class="site-head">
+  <div class="wrap site-head__inner">
+    <a class="brand" href="/" aria-label="Kolo — на головну">
+      {{ mark(30) }}
+      <span class="brand__name">kolo</span>
+    </a>
+
+    <nav class="site-nav" id="site-nav" aria-label="Головна навігація">
+      {% if isAuthed %}
+        {% if currentUser.role == 'visitor' %}
+          <a class="site-nav__link {% if currentPath | starts('/surveys') %}is-current{% endif %}" href="/surveys">Опитування</a>
+        {% else %}
+          <a class="site-nav__link {% if currentPath == '/studio' %}is-current{% endif %}" href="/studio">Огляд</a>
+          <a class="site-nav__link {% if currentPath | starts('/studio/surveys') %}is-current{% endif %}" href="/studio/surveys">Опитування</a>
+        {% endif %}
+        <a class="site-nav__link {% if currentPath | starts('/studio/responses') %}is-current{% endif %}" href="/studio/responses">Відповіді</a>
+        {% if currentUser.role == 'admin' %}
+          <a class="site-nav__link {% if currentPath | starts('/studio/categories') %}is-current{% endif %}" href="/studio/categories">Категорії</a>
+          <a class="site-nav__link {% if currentPath | starts('/studio/people') %}is-current{% endif %}" href="/studio/people">Люди</a>
+        {% endif %}
+        <a class="site-nav__link site-nav__link--catalog" href="/surveys">Каталог</a>
+      {% else %}
+        <a class="site-nav__link {% if currentPath | starts('/surveys') %}is-current{% endif %}" href="/surveys">Опитування</a>
+        <a class="site-nav__link" href="/#how">Як працює</a>
+        <a class="site-nav__link" href="/#topics">Теми</a>
+      {% endif %}
+    </nav>
+
+    <div class="site-head__actions">
+      {% if isAuthed %}
+        {% if currentUser.role != 'visitor' %}
+          <a class="btn btn--primary btn--sm head-create" href="/studio/surveys?new=1" aria-label="Створити опитування">{{ icon('plus', 16) }}<span>Створити</span></a>
+        {% endif %}
+        <details class="user-menu">
+          <summary class="user-menu__trigger" aria-label="Меню профілю">
+            <span class="avatar">{{ currentUser.full_name | initials }}</span>
+          </summary>
+          <div class="user-menu__panel">
+            <div class="user-menu__id">
+              <strong>{{ currentUser.full_name }}</strong>
+              <span>{{ currentUser.email }}</span>
+              <span class="chip chip--soft">{{ currentUser.role | roleLabel }}</span>
+            </div>
+            <a class="user-menu__item" href="/studio/profile">{{ icon('user', 17) }} Профіль</a>
+            {% if currentUser.role == 'visitor' %}
+              <a class="user-menu__item" href="/studio/responses">{{ icon('inbox', 17) }} Мої відповіді</a>
+            {% endif %}
+            <form action="/logout" method="post" data-ajax-form data-redirect="/">
+              <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+              <button class="user-menu__item user-menu__item--button" type="submit">{{ icon('logout', 17) }} Вийти</button>
+            </form>
+          </div>
+        </details>
+      {% else %}
+        <a class="head-login" href="/login">Увійти</a>
+        <a class="btn btn--primary btn--sm" href="/register">Створити акаунт</a>
+      {% endif %}
+      <button class="icon-btn menu-btn" type="button" data-menu-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Відкрити меню">
+        {{ icon('menu', 22) }}
+      </button>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,49 @@
+{% for person in people %}
+  <tr data-person-row data-id="{{ person.id }}">
+    <td>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span class="activity__avatar">{{ person.full_name | initials }}</span>
+        <div style="min-width:0;">
+          <div class="data-table__name">{{ person.full_name }}</div>
+          <div class="data-table__sub">{{ person.email }}</div>
+        </div>
+      </div>
+    </td>
+    <td data-label="Роль"><span class="chip chip--soft">{{ person.role | roleLabel }}</span></td>
+    <td data-label="Заклад" class="muted">{{ person.institution or '—' }}</td>
+    <td data-label="Активність">
+      <div class="data-table__sub">{{ person.survey_count }} {{ person.survey_count | surveyWord }}</div>
+      <div class="data-table__sub">{{ person.response_count }} {{ person.response_count | responseWord }}</div>
+    </td>
+    <td data-label="Статус">
+      {% if person.is_active %}
+        <span class="chip chip--positive">Активний</span>
+      {% else %}
+        <span class="chip chip--muted">Вимкнений</span>
+      {% endif %}
+    </td>
+    <td class="data-table__actions" data-label="Дії">
+      <button class="icon-btn" type="button" title="Редагувати" aria-label="Редагувати {{ person.full_name }}"
+              data-edit-person
+              data-endpoint="/studio/people/{{ person.id }}"
+              data-id="{{ person.id }}"
+              data-name="{{ person.full_name }}"
+              data-email="{{ person.email }}"
+              data-role="{{ person.role }}"
+              data-institution="{{ person.institution or '' }}"
+              data-phone="{{ person.phone or '' }}"
+              data-active="{{ 'true' if person.is_active else 'false' }}">{{ icon('edit', 16) }}</button>
+      {% if person.id != currentUserId %}
+        <button class="icon-btn icon-btn--danger" type="button" title="Видалити" aria-label="Видалити {{ person.full_name }}"
+                data-confirm
+                data-confirm-title="Видалити людину?"
+                data-confirm-text="Акаунт {{ person.full_name }} буде видалено. Опитування, які вона створила, перейдуть до вас; відповіді залишаться анонімними."
+                data-confirm-label="Видалити людину"
+                data-confirm-endpoint="/studio/people/{{ person.id }}/delete"
+                data-region="#people-rows">{{ icon('trash', 16) }}</button>
+      {% endif %}
+    </td>
+  </tr>
+{% else %}
+  <tr><td colspan="6" class="row-empty">Облікових записів ще немає.</td></tr>
+{% endfor %}

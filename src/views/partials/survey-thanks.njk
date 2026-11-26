@@ -1,0 +1,21 @@
+<div class="thanks">
+  <div class="thanks__ring">{{ icon('check', 40) }}</div>
+  <p class="eyebrow">Відповіді збережено</p>
+  <h1>Дякуємо. Ваш голос почуто.</h1>
+  <p>
+    Відповіді на «{{ survey.title }}» вже в автора.
+    {% if anonymous %}
+      Анкета анонімна — ваше ім’я та пошта до неї не прикріплені.
+    {% else %}
+      Автор бачить ваше ім’я, щоб за потреби уточнити відповідь.
+    {% endif %}
+  </p>
+  <div class="thanks__actions">
+    <a class="btn btn--primary" href="/surveys">Пройти ще одне {{ icon('arrow-right', 16) }}</a>
+    {% if isAuthed %}
+      <a class="btn btn--quiet" href="/studio/responses">Мої відповіді</a>
+    {% else %}
+      <a class="btn btn--quiet" href="/register">Створити акаунт</a>
+    {% endif %}
+  </div>
+</div>

@@ -1,0 +1,113 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="wrap page">
+  <header class="page-head">
+    <div>
+      <p class="page-head__eyebrow">{{ icon('users', 14) }} Адміністрування</p>
+      <h1>Люди</h1>
+      <p>Облікові записи, ролі та доступ. Дослідники створюють власні опитування, учасники проходять анкети й бачать свої відповіді.</p>
+    </div>
+    <div class="page-head__actions">
+      <button class="btn btn--primary" type="button" data-open-dialog="personDialog" data-mode="create">{{ icon('plus', 16) }} Додати людину</button>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Людина</th>
+            <th>Роль</th>
+            <th>Заклад</th>
+            <th>Активність</th>
+            <th>Статус</th>
+            <th style="text-align:right;">Дії</th>
+          </tr>
+        </thead>
+        <tbody id="people-rows">
+          {% include "partials/people-rows.njk" %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<dialog class="modal" id="personDialog">
+  <div class="modal__panel">
+    <div class="modal__head">
+      <div><h2 data-person-title>Додати людину</h2></div>
+      <button class="icon-btn" type="button" data-close-dialog aria-label="Закрити">{{ icon('x', 18) }}</button>
+    </div>
+    <p class="modal__sub" data-person-sub>Пароль генерується тут або задається вручну. Людина зможе змінити його у профілі.</p>
+
+    <form method="post" action="/studio/people" data-ajax-form data-person-form data-region="#people-rows" novalidate>
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+      <div class="modal__body">
+        <div class="form-grid">
+          <div class="field field--wide" data-field="full_name">
+            <label class="field__label" for="personName">Ім’я та прізвище</label>
+            <input class="input" id="personName" name="full_name" type="text" maxlength="150" placeholder="Олена Ковальчук">
+            <p class="field__error" data-error></p>
+          </div>
+
+          <div class="field" data-field="email">
+            <label class="field__label" for="personEmail">Пошта</label>
+            <input class="input" id="personEmail" name="email" type="email" maxlength="160" placeholder="name@domain.ua">
+            <p class="field__error" data-error></p>
+          </div>
+
+          <div class="field" data-field="role">
+            <label class="field__label" for="personRole">Роль</label>
+            <select class="select__native" id="personRole" name="role" data-select>
+              <option value="visitor">Учасник</option>
+              <option value="creator">Дослідник</option>
+              <option value="admin">Адміністратор</option>
+            </select>
+            <p class="field__error" data-error></p>
+          </div>
+
+          <div class="field" data-field="institution">
+            <label class="field__label" for="personInstitution">Заклад</label>
+            <input class="input" id="personInstitution" name="institution" type="text" maxlength="150" placeholder="Команда або установа">
+            <p class="field__error" data-error></p>
+          </div>
+
+          <div class="field" data-field="phone">
+            <label class="field__label" for="personPhone">Телефон</label>
+            <input class="input" id="personPhone" name="phone" type="tel" maxlength="30" placeholder="+380 67 000 00 00">
+            <p class="field__error" data-error></p>
+          </div>
+
+          <div class="field field--wide" data-field="password">
+            <label class="field__label" for="personPassword">Пароль</label>
+            <div class="password">
+              <input class="input" id="personPassword" name="password" type="password" autocomplete="new-password" placeholder="Щонайменше 10 символів">
+              <button class="password__toggle" type="button" data-password-toggle aria-label="Показати пароль">{{ icon('eye', 17) }}</button>
+            </div>
+            <div class="form-actions" style="margin-top: 4px;">
+              <button class="btn btn--quiet btn--sm" type="button" data-generate-password>{{ icon('refresh', 14) }} Згенерувати надійний</button>
+            </div>
+            <p class="field__hint" data-password-hint>Щонайменше 10 символів, одна літера та одна цифра.</p>
+            <p class="field__error" data-error></p>
+          </div>
+        </div>
+
+        <label class="switch">
+          <input type="checkbox" name="is_active" value="true" checked>
+          <span class="switch__track"></span>
+          <span class="switch__text">Акаунт активний<small>Вимкнений акаунт не може увійти, але його дані зберігаються.</small></span>
+        </label>
+
+        <div class="form-error" data-form-error></div>
+      </div>
+
+      <div class="modal__foot">
+        <button class="btn btn--quiet" type="button" data-close-dialog>Скасувати</button>
+        <button class="btn btn--primary" type="submit"><span class="btn__label">Зберегти</span></button>
+      </div>
+    </form>
+  </div>
+</dialog>
+{% endblock %}

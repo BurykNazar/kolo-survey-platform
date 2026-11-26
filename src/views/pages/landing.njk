@@ -1,0 +1,203 @@
+{% extends "layouts/base.njk" %}
+{% from "partials/mark.njk" import mark %}
+
+{% block bodyClass %}landing{% endblock %}
+
+{% block content %}
+<section class="hero" data-enter>
+  <div class="wrap hero__grid">
+    <div>
+      <p class="eyebrow enter enter--1">Опитування для команд і спільнот</p>
+      <h1 class="enter enter--2"><span>Запитайте.</span><span>Почуйте.</span><span>Вирішіть.</span></h1>
+      <p class="hero__lead enter enter--3">Kolo збирає відповіді команди, клієнтів і громади в одному місці. Ви ставите питання — люди відповідають без реєстрації, а ви бачите не таблицю, а картину.</p>
+
+      <div class="hero__actions enter enter--4">
+        {% if isAuthed and currentUser.role != 'visitor' %}
+          <a class="btn btn--primary" href="/studio/surveys?new=1">{{ icon('plus', 17) }} Створити опитування</a>
+        {% else %}
+          <a class="btn btn--primary" href="{{ '/studio/surveys?new=1' if isAuthed else '/register' }}">{{ icon('plus', 17) }} Створити опитування</a>
+        {% endif %}
+        <a class="btn btn--quiet" href="/surveys">Пройти опитування {{ icon('arrow-right', 17) }}</a>
+      </div>
+
+      <p class="hero__fact enter enter--5">
+        <span><strong>{{ activeCount }}</strong> {{ activeCount | surveyWord }} зараз</span>
+        <span><strong>{{ totals.attempts }}</strong> {{ totals.attempts | responseWord }}</span>
+        <span><strong>{{ categories.length }}</strong> тем</span>
+      </p>
+    </div>
+
+    <div class="hero__art enter enter--3">
+      <div class="hero__rings" aria-hidden="true"></div>
+      <div class="hero__disc" aria-hidden="true"></div>
+
+      {% if showcase and showcaseQuestion %}
+        <article class="specimen" aria-label="Приклад питання з каталогу">
+          <div class="specimen__top">
+            <span class="specimen__step">{{ showcase.questions.length }} {{ showcase.questions.length | questionWord }} · {{ showcase.estimated_minutes }} хв</span>
+            {% if showcase.is_anonymous %}
+              <span class="chip chip--positive">Анонімно</span>
+            {% else %}
+              <span class="chip chip--neutral">{{ showcase.category.name if showcase.category else 'Опитування' }}</span>
+            {% endif %}
+          </div>
+          <div class="specimen__bar" aria-hidden="true"><span></span></div>
+
+          <p class="specimen__label">
+            {% if showcaseQuestion.question_type == 'rating' %}Шкала 1–10{% else %}Оберіть один варіант{% endif %}
+          </p>
+          <h2>{{ showcaseQuestion.question_text }}</h2>
+
+          {% if showcaseQuestion.question_type == 'rating' %}
+            <div class="specimen__scale" aria-hidden="true">
+              {% for value in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] %}
+                <span class="specimen__pip {% if value == 8 %}is-on{% endif %}">{{ value }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="auth__options">
+              {% for option in showcaseQuestion.options %}
+                {% if loop.index <= 3 %}<span class="auth__option">{{ option.option_text }}</span>{% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div class="specimen__foot">
+            <span class="specimen__title">{{ showcase.title }}</span>
+            <span class="specimen__count">{{ icon('users', 14) }} {{ counts[showcase.id] or 0 }}</span>
+          </div>
+        </article>
+
+        <div class="hero__stamp" aria-hidden="true">
+          <span class="hero__stamp-ring">{{ icon('check', 16) }}</span>
+          <span class="hero__stamp-text"><strong>Без реєстрації</strong>Посиланням можна поділитися</span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="live-title">
+  <div class="wrap">
+    <div class="section__head">
+      <div>
+        <h2 id="live-title">Опитування, які зараз збирають відповіді</h2>
+        <p class="section__lead">Три активні дослідження з каталогу. Участь безкоштовна, більшість займає до п’яти хвилин.</p>
+      </div>
+      <a class="link" href="/surveys">Усі опитування {{ icon('arrow-right', 16) }}</a>
+    </div>
+
+    <div class="cards-3">
+      {% for survey in featured %}
+        <a class="survey-card" href="/surveys/{{ survey.id }}">
+          <div>
+            <div class="survey-card__top">
+              <span class="chip chip--soft">{{ survey.category.name if survey.category else 'Без теми' }}</span>
+              {% if survey.is_anonymous %}
+                <span class="chip chip--positive">Анонімно</span>
+              {% endif %}
+            </div>
+            <h3>{{ survey.title }}</h3>
+            <p class="survey-card__meta">
+              <span>{{ icon('list', 14) }} {{ survey.questions.length }} {{ survey.questions.length | questionWord }}</span>
+              <span>{{ icon('clock', 14) }} {{ survey.estimated_minutes }} хв</span>
+              <span>{{ icon('users', 14) }} {{ counts[survey.id] or 0 }}</span>
+            </p>
+          </div>
+          <div class="survey-card__foot">
+            <span>Відкрити опитування</span>
+            <span class="survey-card__go">{{ icon('arrow-right', 16) }}</span>
+          </div>
+        </a>
+      {% else %}
+        <div class="empty-state">
+          <span class="empty-state__mark">{{ icon('inbox', 26) }}</span>
+          <h3>Поки що немає активних опитувань</h3>
+          <p>Створіть перше — і воно з’явиться тут для всіх учасників.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="how" aria-labelledby="how-title">
+  <div class="wrap">
+    <div class="section__head">
+      <div>
+        <h2 id="how-title">Від питання до рішення — три кроки</h2>
+        <p class="section__lead">Без окремих інструментів для форм, таблиць і звітів. Усе в одному місці.</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <article class="step">
+        <span class="step__num">01</span>
+        <h3>Сформулюйте питання</h3>
+        <p>Назва, тема й до шести типів питань. Чернетку можна показати команді до публікації.</p>
+      </article>
+      <article class="step">
+        <span class="step__num">02</span>
+        <h3>Поділіться посиланням</h3>
+        <p>Учасникам не потрібен акаунт. Анонімність вмикається одним перемикачем і діє для всіх відповідей.</p>
+      </article>
+      <article class="step">
+        <span class="step__num">03</span>
+        <h3>Читайте відповіді</h3>
+        <p>Відповіді згруповані за спробами. Видно людину, якщо вона не обрала анонімність, і видно питання, які варто уточнити.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="topics" aria-labelledby="topics-title">
+  <div class="wrap">
+    <div class="section__head">
+      <div>
+        <h2 id="topics-title">Шість тем, з яких починають</h2>
+        <p class="section__lead">Кожна тема збирає опитування свого кола: продукт, команда, клієнти, освіта, громада, події.</p>
+      </div>
+    </div>
+
+    <div class="topics">
+      {% for category in categories %}
+        <a class="topic" href="/surveys?category={{ category.code }}">
+          <span class="topic__index">{{ loop.index | pad2 }}</span>
+          <span class="topic__name">{{ category.name }}</span>
+          <span class="topic__count">{{ category.active_surveys }} {{ category.active_surveys | surveyWord }}</span>
+          <span class="topic__arrow">{{ icon('arrow-right', 16) }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section--tight" aria-labelledby="band-title">
+  <div class="wrap">
+    <div class="band">
+      <span class="band__ring" aria-hidden="true"></span>
+      <span class="band__eyebrow">Kolo у цифрах</span>
+      <h2 id="band-title">Наступне рішення не має чекати на здогадки. <em>Запитайте тих, хто знає.</em></h2>
+
+      <div class="band__grid">
+        <div class="band__stats">
+          <div class="band__stat">
+            <strong>{{ activeCount }}</strong>
+            <span>активних опитувань у каталозі</span>
+          </div>
+          <div class="band__stat">
+            <strong>{{ totals.attempts }}</strong>
+            <span>заповнених анкет</span>
+          </div>
+          <div class="band__stat">
+            <strong>{{ categories.length }}</strong>
+            <span>тем для досліджень</span>
+          </div>
+        </div>
+        <div class="band__actions">
+          <a class="btn btn--lime" href="{{ '/studio' if isAuthed else '/register' }}">{{ 'Перейти в кабінет' if isAuthed else 'Почати безкоштовно' }} {{ icon('arrow-right', 17) }}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

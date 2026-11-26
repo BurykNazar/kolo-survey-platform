@@ -1,0 +1,6 @@
+{% macro mark(size=30) -%}
+<svg class="brand__mark" width="{{ size }}" height="{{ size }}" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+  <circle cx="16" cy="16" r="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="58 18" transform="rotate(-90 16 16)"></circle>
+  <circle cx="16" cy="16" r="3" fill="currentColor"></circle>
+</svg>
+{%- endmacro %}

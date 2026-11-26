@@ -1,0 +1,28 @@
+{% for category in categories %}
+  <tr data-category-row data-id="{{ category.id }}">
+    <td>
+      <div class="data-table__name">{{ category.name }}</div>
+      {% if category.description %}<div class="data-table__sub">{{ category.description | truncate(90) }}</div>{% endif %}
+    </td>
+    <td data-label="Код"><code>{{ category.code }}</code></td>
+    <td data-label="Активні">{{ category.active_surveys }} {{ category.active_surveys | surveyWord }}</td>
+    <td class="data-table__actions" data-label="Дії">
+      <button class="icon-btn" type="button" title="Редагувати" aria-label="Редагувати {{ category.name }}"
+              data-edit-category
+              data-endpoint="/studio/categories/{{ category.id }}"
+              data-id="{{ category.id }}"
+              data-name="{{ category.name }}"
+              data-code="{{ category.code }}"
+              data-description="{{ category.description or '' }}">{{ icon('edit', 16) }}</button>
+      <button class="icon-btn icon-btn--danger" type="button" title="Видалити" aria-label="Видалити {{ category.name }}"
+              data-confirm
+              data-confirm-title="Видалити категорію?"
+              data-confirm-text="«{{ category.name }}» зникне з фільтрів. Якщо в ній є опитування, спершу перенесіть їх в іншу тему."
+              data-confirm-label="Видалити категорію"
+              data-confirm-endpoint="/studio/categories/{{ category.id }}/delete"
+              data-region="#category-rows">{{ icon('trash', 16) }}</button>
+    </td>
+  </tr>
+{% else %}
+  <tr><td colspan="4" class="row-empty">Категорій ще немає. Додайте першу тему для каталогу.</td></tr>
+{% endfor %}

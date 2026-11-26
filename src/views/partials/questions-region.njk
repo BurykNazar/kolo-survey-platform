@@ -1,0 +1,57 @@
+<div class="builder__head">
+  <div>
+    <h2>Питання</h2>
+    <span>{{ survey.questions.length }} {{ survey.questions.length | questionWord }}</span>
+  </div>
+  <button class="btn btn--primary btn--sm" type="button" data-add-question>{{ icon('plus', 15) }} Додати питання</button>
+</div>
+
+<div class="question-list">
+  {% for question in survey.questions %}
+    <article class="qitem" data-question-item data-id="{{ question.id }}">
+      <div class="qitem__head">
+        <span class="qitem__num">{{ loop.index | pad2 }}</span>
+        <div class="qitem__main">
+          <h3 class="qitem__text">{{ question.question_text }}</h3>
+          <div class="qitem__meta">
+            <span class="chip chip--soft">{{ question.question_type | surveyTypeLabel }}</span>
+            <span>{{ 'Обов’язкове' if question.is_required else 'Необов’язкове' }}</span>
+            {% if question.options.length %}
+              <span>{{ question.options.length }} {{ question.options.length | plural('варіант', 'варіанти', 'варіантів') }}</span>
+            {% endif %}
+          </div>
+          {% if question.hint %}<p class="qitem__hint">{{ question.hint }}</p>{% endif %}
+          {% if question.options.length %}
+            <div class="qitem__options">
+              {% for option in question.options %}
+                <span class="qitem__option">{{ option.option_text }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        <div class="qitem__actions">
+          <button class="icon-btn" type="button" title="Вище" aria-label="Перемістити вище" data-move-question data-id="{{ question.id }}" data-direction="up" data-endpoint="/studio/questions/{{ question.id }}/move" {% if loop.first %}disabled{% endif %}>{{ icon('arrow-up', 16) }}</button>
+          <button class="icon-btn" type="button" title="Нижче" aria-label="Перемістити нижче" data-move-question data-id="{{ question.id }}" data-direction="down" data-endpoint="/studio/questions/{{ question.id }}/move" {% if loop.last %}disabled{% endif %}>{{ icon('arrow-down', 16) }}</button>
+          <button class="icon-btn" type="button" title="Редагувати" aria-label="Редагувати питання"
+                  data-edit-question
+                  data-endpoint="/studio/questions/{{ question.id }}"
+                  data-question="{{ questionData[question.id] | dump }}">{{ icon('edit', 16) }}</button>
+          <button class="icon-btn icon-btn--danger" type="button" title="Видалити" aria-label="Видалити питання"
+                  data-confirm
+                  data-confirm-title="Видалити питання?"
+                  data-confirm-text="Питання та всі відповіді на нього зникнуть з опитування. Варіанти відповідей також буде видалено."
+                  data-confirm-label="Видалити питання"
+                  data-confirm-endpoint="/studio/questions/{{ question.id }}/delete"
+                  data-region="#questions-region">{{ icon('trash', 16) }}</button>
+        </div>
+      </div>
+    </article>
+  {% else %}
+    <div class="empty-state" style="background: var(--surface); border: 1px solid var(--line); border-radius: 18px;">
+      <span class="empty-state__mark">{{ icon('list', 24) }}</span>
+      <h3>Ще жодного питання</h3>
+      <p>Додайте перше питання — відкрите, з варіантами чи шкалою. Чернетку можна змінювати будь-коли.</p>
+      <button class="btn btn--primary btn--sm" type="button" data-add-question>{{ icon('plus', 15) }} Додати питання</button>
+    </div>
+  {% endfor %}
+</div>

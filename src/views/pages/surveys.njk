@@ -1,0 +1,178 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="wrap page">
+  <header class="page-head">
+    <div>
+      <p class="page-head__eyebrow">{{ icon('list', 14) }} Кабінет</p>
+      <h1>Опитування</h1>
+      <p>Чернетки, активні анкети й завершені дослідження. Кількість відповідей рахується за унікальними анкетами.</p>
+    </div>
+    <div class="page-head__actions">
+      <a class="btn btn--quiet" href="/surveys">Каталог</a>
+      <button class="btn btn--primary" type="button" data-open-dialog="createSurveyDialog">{{ icon('plus', 16) }} Нове опитування</button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="filter-chips" aria-label="Фільтр за статусом">
+      <a class="filter-chip {% if activeStatus == 'all' %}is-active{% endif %}" href="/studio/surveys">Усі <span>{{ statusTotals.all }}</span></a>
+      <a class="filter-chip {% if activeStatus == 'active' %}is-active{% endif %}" href="/studio/surveys?status=active">Активні <span>{{ statusTotals.active }}</span></a>
+      <a class="filter-chip {% if activeStatus == 'draft' %}is-active{% endif %}" href="/studio/surveys?status=draft">Чернетки <span>{{ statusTotals.draft }}</span></a>
+      <a class="filter-chip {% if activeStatus == 'closed' %}is-active{% endif %}" href="/studio/surveys?status=closed">Завершені <span>{{ statusTotals.closed }}</span></a>
+    </div>
+    <div class="search">
+      {{ icon('search', 16) }}
+      <label class="visually-hidden" for="surveySearch">Пошук опитувань</label>
+      <input class="input" id="surveySearch" type="search" placeholder="Пошук за назвою" autocomplete="off" data-list-search>
+    </div>
+  </div>
+
+  <div class="list">
+    <div class="list__head">
+      <span>Назва</span>
+      <span>Відповіді</span>
+      <span>Статус</span>
+      <span style="text-align:right;">Дії</span>
+    </div>
+    <div data-list-body>
+      {% for survey in surveys %}
+        <div class="survey-row" data-survey-row data-search="{{ (survey.title ~ ' ' ~ (survey.category.name if survey.category else '') ~ ' ' ~ (survey.status | statusLabel)) | lower }}" data-survey-id="{{ survey.id }}">
+          <div class="survey-row__main">
+            <a class="survey-row__title" href="/studio/surveys/{{ survey.id }}">{{ survey.title }}</a>
+            <div class="survey-row__meta">
+              <span>{{ survey.category.name if survey.category else 'Без теми' }}</span>
+              <span>{{ survey.questions.length }} {{ survey.questions.length | questionWord }}</span>
+              <span>{{ survey.estimated_minutes }} хв</span>
+              {% if currentUser.role == 'admin' %}<span>{{ survey.creator.full_name if survey.creator else '—' }}</span>{% endif %}
+              {% if survey.expires_at %}<span>до {{ survey.expires_at | formatShortDate }}</span>{% endif %}
+            </div>
+          </div>
+          <div class="survey-row__count"><strong>{{ counts[survey.id] or 0 }}</strong>{{ counts[survey.id] | responseWord }}</div>
+          <div class="survey-row__status"><span class="chip chip--{{ survey.status | statusTone }}">{{ survey.status | statusLabel }}</span></div>
+          <div class="survey-row__actions">
+            <a class="icon-btn" href="/studio/surveys/{{ survey.id }}" title="Редагувати" aria-label="Редагувати {{ survey.title }}">{{ icon('edit', 17) }}</a>
+            <a class="icon-btn" href="/surveys/{{ survey.id }}" title="Відкрити анкету" aria-label="Відкрити анкету {{ survey.title }}" target="_blank" rel="noopener">{{ icon('external', 17) }}</a>
+            {% if currentUser.role == 'admin' %}
+              <button class="icon-btn" type="button" title="Копіювати" aria-label="Копіювати {{ survey.title }}" data-copy-survey data-survey-id="{{ survey.id }}" data-survey-title="{{ survey.title }}">{{ icon('copy', 17) }}</button>
+            {% endif %}
+            <button class="icon-btn icon-btn--danger" type="button" title="Видалити" aria-label="Видалити {{ survey.title }}"
+                    data-confirm
+                    data-confirm-title="Видалити опитування?"
+                    data-confirm-text="«{{ survey.title }}» зникне разом із питаннями, варіантами та {{ counts[survey.id] or 0 }} {{ counts[survey.id] | responseWord }}. Скасувати цю дію неможливо."
+                    data-confirm-label="Видалити опитування"
+                    data-confirm-endpoint="/studio/surveys/{{ survey.id }}/delete"
+                    data-remove-target="[data-survey-id='{{ survey.id }}']"
+                    data-redirect="/studio/surveys">{{ icon('trash', 17) }}</button>
+          </div>
+        </div>
+      {% else %}
+        <div class="row-empty">У цій добірці немає опитувань. Створіть перше — або оберіть інший статус.</div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<dialog class="modal" id="createSurveyDialog">
+  <div class="modal__panel">
+    <div class="modal__head">
+      <div>
+        <h2>Нове опитування</h2>
+      </div>
+      <button class="icon-btn" type="button" data-close-dialog aria-label="Закрити">{{ icon('x', 18) }}</button>
+    </div>
+    <p class="modal__sub">Створіть чернетку, додайте питання і опублікуйте, коли все буде готово.</p>
+
+    <form method="post" action="/studio/surveys" data-ajax-form data-redirect-on-success data-reset-on-open novalidate>
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+      <input type="hidden" name="status" value="draft">
+      <div class="modal__body">
+        <div class="field" data-field="title">
+          <label class="field__label" for="newSurveyTitle">Назва</label>
+          <input class="input" id="newSurveyTitle" name="title" type="text" placeholder="Наприклад, Що допоможе команді працювати спокійніше" maxlength="160">
+          <p class="field__error" data-error></p>
+        </div>
+
+        <div class="form-grid">
+          <div class="field" data-field="category_id">
+            <label class="field__label" for="newSurveyCategory">Категорія</label>
+            <select class="select__native" id="newSurveyCategory" name="category_id" data-select>
+              <option value="">Оберіть тему</option>
+              {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+              {% endfor %}
+            </select>
+            <p class="field__error" data-error></p>
+          </div>
+
+          {% if currentUser.role == 'admin' %}
+            <div class="field" data-field="creator_id">
+              <label class="field__label" for="newSurveyCreator">Автор</label>
+              <select class="select__native" id="newSurveyCreator" name="creator_id" data-select>
+                {% for creator in creators %}
+                  <option value="{{ creator.id }}" {% if creator.id == currentUser.id %}selected{% endif %}>{{ creator.full_name }}</option>
+                {% endfor %}
+              </select>
+              <p class="field__error" data-error></p>
+            </div>
+          {% endif %}
+
+          <div class="field" data-field="estimated_minutes">
+            <label class="field__label" for="newSurveyMinutes">Скільки хвилин триває</label>
+            <input class="input" id="newSurveyMinutes" name="estimated_minutes" type="number" inputmode="numeric" value="5" min="1" max="120">
+            <p class="field__error" data-error></p>
+          </div>
+        </div>
+
+        <div class="form-error" data-form-error></div>
+      </div>
+
+      <div class="modal__foot">
+        <button class="btn btn--quiet" type="button" data-close-dialog>Скасувати</button>
+        <button class="btn btn--primary" type="submit">
+          <span class="btn__label">Створити чернетку</span>
+          {{ icon('arrow-right', 16) }}
+        </button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+{% if currentUser.role == 'admin' %}
+  <dialog class="modal" id="copySurveyDialog">
+    <div class="modal__panel">
+      <div class="modal__head">
+        <div><h2>Копіювати опитування</h2></div>
+        <button class="icon-btn" type="button" data-close-dialog aria-label="Закрити">{{ icon('x', 18) }}</button>
+      </div>
+      <p class="modal__sub">Копія отримає питання й варіанти, але не відповіді. Новий автор зможе змінювати її незалежно.</p>
+
+      <form method="post" action="" data-ajax-form data-redirect-on-success data-reset-on-open novalidate data-copy-form>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        <div class="modal__body">
+          <p class="small muted">Джерело: <strong data-copy-source>—</strong></p>
+          <div class="field" data-field="creator_id">
+            <label class="field__label" for="copyCreator">Новий автор</label>
+            <select class="select__native" id="copyCreator" name="creator_id" data-select>
+              {% for creator in creators %}
+                <option value="{{ creator.id }}">{{ creator.full_name }}</option>
+              {% endfor %}
+            </select>
+            <p class="field__error" data-error></p>
+          </div>
+          <div class="field" data-field="title">
+            <label class="field__label" for="copyTitle">Назва копії</label>
+            <input class="input" id="copyTitle" name="title" type="text" maxlength="255">
+            <p class="field__error" data-error></p>
+          </div>
+          <div class="form-error" data-form-error></div>
+        </div>
+        <div class="modal__foot">
+          <button class="btn btn--quiet" type="button" data-close-dialog>Скасувати</button>
+          <button class="btn btn--primary" type="submit"><span class="btn__label">Створити копію</span></button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+{% endif %}
+{% endblock %}

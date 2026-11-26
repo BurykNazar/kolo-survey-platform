@@ -1,0 +1,85 @@
+{% extends "layouts/base.njk" %}
+{% from "partials/mark.njk" import mark %}
+
+{% block bodyClass %}auth-page{% endblock %}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block mainClass %}auth{% endblock %}
+
+{% block content %}
+<section class="auth__side">
+  <a class="brand" href="/">
+    {{ mark(30) }}
+    <span class="brand__name">kolo</span>
+  </a>
+
+  <div class="auth__body">
+    <h1>Створити акаунт</h1>
+    <p>Учасникам реєстрація не потрібна. Акаунт відкриває кабінет, власні опитування та історію відповідей.</p>
+
+    <form class="auth__form" method="post" action="/register" data-ajax-form data-redirect-on-success novalidate>
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+      <div class="field {% if errors.full_name %}is-invalid{% endif %}" data-field="full_name">
+        <label class="field__label" for="full_name">Ім’я та прізвище</label>
+        <input class="input" id="full_name" name="full_name" type="text" autocomplete="name" placeholder="Наприклад, Олена Ковальчук" value="{{ values.full_name or '' }}">
+        <p class="field__error" data-error>{{ errors.full_name or '' }}</p>
+      </div>
+
+      <div class="field {% if errors.email %}is-invalid{% endif %}" data-field="email">
+        <label class="field__label" for="email">Електронна пошта</label>
+        <input class="input" id="email" name="email" type="email" autocomplete="email" placeholder="name@domain.ua" value="{{ values.email or '' }}">
+        <p class="field__error" data-error>{{ errors.email or '' }}</p>
+      </div>
+
+      <div class="field {% if errors.institution %}is-invalid{% endif %}" data-field="institution">
+        <label class="field__label" for="institution">Заклад або команда <span class="muted">(необов’язково)</span></label>
+        <input class="input" id="institution" name="institution" type="text" autocomplete="organization" placeholder="Де ви працюєте або навчаєтесь" value="{{ values.institution or '' }}">
+        <p class="field__error" data-error>{{ errors.institution or '' }}</p>
+      </div>
+
+      <div class="field {% if errors.password %}is-invalid{% endif %}" data-field="password">
+        <label class="field__label" for="password">Пароль</label>
+        <div class="password">
+          <input class="input" id="password" name="password" type="password" autocomplete="new-password" placeholder="Щонайменше 10 символів">
+          <button class="password__toggle" type="button" data-password-toggle aria-label="Показати пароль">{{ icon('eye', 17) }}</button>
+        </div>
+        <p class="field__hint">Щонайменше 10 символів, одна літера та одна цифра.</p>
+        <p class="field__error" data-error>{{ errors.password or '' }}</p>
+      </div>
+
+      <div class="form-error {% if errors._global %}is-visible{% endif %}" data-form-error>{{ errors._global or '' }}</div>
+
+      <button class="btn btn--primary btn--block" type="submit">
+        <span class="btn__label">Зареєструватися</span>
+        {{ icon('arrow-right', 17) }}
+      </button>
+    </form>
+
+    <p class="auth__switch">Вже маєте акаунт? <a href="/login">Увійти</a></p>
+  </div>
+</section>
+
+<aside class="auth__aside">
+  {% if showcase %}
+    <div class="auth__card">
+      <span class="chip chip--soft">{{ showcase.survey.category.name if showcase.survey.category else 'Каталог' }}</span>
+      <h2>{{ showcase.survey.title }}</h2>
+      {% if showcase.question %}
+        <p class="specimen__label" style="margin-top: 18px;">{{ showcase.question.question_text }}</p>
+        {% if showcase.question.question_type == 'single_choice' %}
+          <div class="auth__options">
+            {% for option in showcase.question.options %}
+              {% if loop.index <= 4 %}<span class="auth__option">{{ option.option_text }}</span>{% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endif %}
+      <div class="auth__card-foot">
+        <span>{{ showcase.attempts }} {{ showcase.attempts | responseWord }}</span>
+        <a class="link" href="/surveys/{{ showcase.survey.id }}">Відкрити {{ icon('arrow-right', 14) }}</a>
+      </div>
+    </div>
+  {% endif %}
+</aside>
+{% endblock %}

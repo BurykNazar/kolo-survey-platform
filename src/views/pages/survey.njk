@@ -1,0 +1,142 @@
+{% extends "layouts/base.njk" %}
+
+{% block mainClass %}main runner-page{% endblock %}
+
+{% block content %}
+<div class="runner-progress" aria-hidden="true"><span data-runner-progress></span></div>
+
+<div class="wrap">
+  <header class="runner__head">
+    <div class="runner__badges">
+      {% if survey.category %}
+        <a class="chip chip--soft" href="/surveys?category={{ survey.category.code }}">{{ survey.category.name }}</a>
+      {% endif %}
+      <span class="chip chip--{{ 'positive' if open else 'muted' }}">{{ 'Приймає відповіді' if open else 'Попередній перегляд' }}</span>
+      {% if survey.is_anonymous %}
+        <span class="chip chip--neutral">Анонімно</span>
+      {% endif %}
+    </div>
+
+    <h1>{{ survey.title }}</h1>
+    {% if survey.description %}
+      <p class="runner__desc">{{ survey.description }}</p>
+    {% endif %}
+
+    <div class="runner__meta">
+      <span>{{ icon('list', 14) }} {{ survey.questions.length }} {{ survey.questions.length | questionWord }}</span>
+      <span>{{ icon('clock', 14) }} близько {{ survey.estimated_minutes }} хв</span>
+      <span>{{ icon('users', 14) }} {{ attempts }} {{ attempts | responseWord }}</span>
+      {% if survey.expires_at %}
+        <span>{{ icon('calendar', 14) }} до {{ survey.expires_at | formatDate }}</span>
+      {% endif %}
+      <span>{{ icon('user', 14) }} {{ survey.creator.full_name if survey.creator else 'Автор опитування' }}</span>
+    </div>
+  </header>
+
+  {% if preview %}
+    <div class="form-error is-visible" style="max-width: 780px; margin: 0 auto 16px;">
+      {% if survey.status == 'draft' %}Це чернетка. Учасники не бачать її в каталозі, а відповіді не приймаються.{% else %}Опитування завершене. Відповіді більше не приймаються.{% endif %}
+    </div>
+  {% endif %}
+
+  {% if message %}
+    <div class="form-error is-visible" style="max-width: 780px; margin: 0 auto 16px;">{{ message }}</div>
+  {% endif %}
+
+  <form class="runner__form" data-survey-form data-survey-id="{{ survey.id }}" data-endpoint="/surveys/{{ survey.id }}/responses" novalidate>
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+    <fieldset class="runner-fieldset" {% if preview %}disabled{% endif %} style="border:0; padding:0; margin:0; min-width:0;">
+
+      {% for question in survey.questions %}
+        {% set key = 'q_' ~ question.id %}
+        {% set hasError = errors[key] %}
+        <section class="q {% if hasError %}is-invalid{% endif %}" data-question data-question-id="{{ question.id }}" data-type="{{ question.question_type }}">
+          <div class="q__head">
+            <span class="q__num">{{ loop.index | pad2 }}</span>
+            <div class="q__main">
+              <h2 class="q__title">{{ question.question_text }}{% if question.is_required %}<span class="q__req" aria-hidden="true">*</span>{% endif %}</h2>
+              {% if question.hint %}<p class="q__hint">{{ question.hint }}</p>{% endif %}
+            </div>
+          </div>
+
+          <div class="q__body">
+            {% if question.question_type == 'single_choice' %}
+              <div class="choice-list">
+                {% for option in question.options %}
+                  <label class="choice" for="opt_{{ option.id }}">
+                    <input type="radio" id="opt_{{ option.id }}" name="{{ key }}" value="{{ option.id }}" {% if values[key] and values[key] | string == option.id | string %}checked{% endif %}>
+                    <span class="choice__dot"></span>
+                    <span>{{ option.option_text }}</span>
+                  </label>
+                {% endfor %}
+              </div>
+
+            {% elif question.question_type == 'multiple_choice' %}
+              <div class="choice-list">
+                {% for option in question.options %}
+                  <label class="choice choice--multi" for="opt_{{ option.id }}">
+                    <input type="checkbox" id="opt_{{ option.id }}" name="{{ key }}" value="{{ option.id }}">
+                    <span class="choice__dot"></span>
+                    <span>{{ option.option_text }}</span>
+                  </label>
+                {% endfor %}
+              </div>
+
+            {% elif question.question_type == 'rating' %}
+              <div class="rating-scale" role="radiogroup" aria-label="{{ question.question_text }}">
+                {% for value in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] %}
+                  <label class="rating-opt">
+                    <input type="radio" name="{{ key }}" value="{{ value }}" {% if values[key] and values[key] | string == value | string %}checked{% endif %}>
+                    <span>{{ value }}</span>
+                  </label>
+                {% endfor %}
+              </div>
+              <div class="rating-legend"><span>1 — низько</span><span>10 — високо</span></div>
+
+            {% else %}
+              <div class="text-answer">
+                <label class="visually-hidden" for="answer_{{ question.id }}">Відповідь на питання</label>
+                <textarea class="textarea" id="answer_{{ question.id }}" name="{{ key }}" rows="4" placeholder="Ваша відповідь" data-counted>{{ values[key] or '' }}</textarea>
+                <span class="text-answer__count" data-count-for="answer_{{ question.id }}">0 / 2000</span>
+              </div>
+            {% endif %}
+          </div>
+
+          <p class="q__error" data-question-error>{{ icon('alert', 14) }} <span>{{ hasError or '' }}</span></p>
+        </section>
+      {% endfor %}
+
+      {% if isAuthed and not survey.is_anonymous %}
+        <label class="anon-toggle">
+          <span class="switch">
+            <input type="checkbox" name="is_anonymous" value="true">
+            <span class="switch__track"></span>
+          </span>
+          <span class="switch__text">
+            Відповісти анонімно
+            <small>Автор не побачить вашого імені та пошти. Позначку про анонімність побачать усі, хто має доступ до відповідей.</small>
+          </span>
+        </label>
+      {% elif survey.is_anonymous %}
+        <div class="anon-toggle">
+          <span class="switch__text">
+            Це анонімне опитування
+            <small>Відповіді не прикріплюються до вашого профілю. Позначку про анонімність побачать усі, хто має доступ до результатів.</small>
+          </span>
+        </div>
+      {% endif %}
+
+      <div class="runner__actions">
+        <p class="runner__actions-note">Відповіді одразу потрапляють до автора. Змінити їх після надсилання не можна.</p>
+        <div class="runner__submit">
+          <a class="btn btn--quiet" href="/surveys">Скасувати</a>
+          <button class="btn btn--primary" type="submit" data-submit>
+            <span class="btn__label">{{ 'Надіслати відповіді' if open else 'Не приймає відповіді' }}</span>
+            {{ icon('send', 17) }}
+          </button>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</div>
+{% endblock %}

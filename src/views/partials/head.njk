@@ -1,0 +1,20 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title | default('Kolo') }}</title>
+<meta name="description" content="{{ description | default('Kolo — платформа опитувань для команд, клієнтів і громад.') }}">
+<meta name="theme-color" content="#143A2C">
+<meta name="color-scheme" content="light">
+<meta name="csrf-token" content="{{ csrfToken }}">
+<meta name="page-type" content="software">
+<meta name="site-kind" content="software">
+{% if currentPath | starts('/studio') %}<meta name="robots" content="noindex">{% endif %}
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ title | default('Kolo') }}">
+<meta property="og:description" content="{{ description | default('Kolo — платформа опитувань для команд, клієнтів і громад.') }}">
+<meta property="og:image" content="/img/favicon.svg">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Unbounded:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/kolo.css">

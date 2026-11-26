@@ -1,0 +1,27 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="wrap">
+  <div class="closed">
+    <div class="runner__badges">
+      {% if survey.category %}
+        <a class="chip chip--soft" href="/surveys?category={{ survey.category.code }}">{{ survey.category.name }}</a>
+      {% endif %}
+      <span class="chip chip--muted">{{ 'Чернетка' if survey.status == 'draft' else 'Завершене' }}</span>
+    </div>
+
+    {% if survey.status == 'draft' %}
+      <h1>Опитування ще готується</h1>
+      <p>Автор не опублікував цю анкету. Коли вона буде готова, посилання запрацює без змін.</p>
+    {% else %}
+      <h1>Опитування завершилося</h1>
+      <p>«{{ survey.title }}» більше не приймає відповіді{% if survey.expires_at %} (завершилося {{ survey.expires_at | formatDate }}){% endif %}. Результати залишаються доступними автору.</p>
+    {% endif %}
+
+    <div class="closed__actions">
+      <a class="btn btn--primary" href="/surveys">Інші опитування {{ icon('arrow-right', 16) }}</a>
+      <a class="btn btn--quiet" href="/">На головну</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="wrap">
+  <div class="error-page">
+    <div>
+      <p class="error-page__code">{{ status or 404 }}</p>
+      <h1>{{ title or 'Сторінку не знайдено' }}</h1>
+      <p>{{ message or 'Схоже, посилання застаріло або сторінку перейменували.' }}</p>
+      <div class="error-page__actions">
+        <a class="btn btn--primary" href="/">На головну</a>
+        <a class="btn btn--quiet" href="/surveys">До каталогу</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

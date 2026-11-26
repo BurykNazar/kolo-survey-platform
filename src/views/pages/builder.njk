@@ -1,0 +1,221 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="wrap page">
+  <header class="page-head">
+    <div>
+      <p class="page-head__eyebrow"><a href="/studio/surveys">{{ icon('arrow-left', 14) }} Усі опитування</a></p>
+      <h1 data-survey-title>{{ survey.title }}</h1>
+      <p>
+        <span class="chip chip--{{ survey.status | statusTone }}" data-status-chip>{{ survey.status | statusLabel }}</span>
+        <span class="muted small" style="margin-left: 10px;">{{ attempts }} {{ attempts | responseWord }} · {{ survey.questions.length }} {{ survey.questions.length | questionWord }}</span>
+      </p>
+    </div>
+    <div class="page-head__actions">
+      <a class="btn btn--quiet" href="/surveys/{{ survey.id }}" target="_blank" rel="noopener">{{ icon('external', 16) }} Перегляд</a>
+      {% if canCopy %}
+        <button class="btn btn--quiet" type="button" data-open-dialog="copySurveyDialog">{{ icon('copy', 16) }} Копія</button>
+      {% endif %}
+      <button class="btn btn--quiet" type="button"
+              data-confirm
+              data-confirm-title="Видалити опитування?"
+              data-confirm-text="«{{ survey.title }}» зникне разом із питаннями, варіантами та {{ attempts }} {{ attempts | responseWord }}. Скасувати цю дію неможливо."
+              data-confirm-label="Видалити опитування"
+              data-confirm-endpoint="/studio/surveys/{{ survey.id }}/delete"
+              data-redirect="/studio/surveys">{{ icon('trash', 16) }} Видалити</button>
+    </div>
+  </header>
+
+  <div class="builder">
+    <aside class="builder__side">
+      <section class="panel">
+        <div class="panel__head">
+          <h2>Налаштування</h2>
+        </div>
+        <div class="panel__body">
+          <form method="post" action="/studio/surveys/{{ survey.id }}" data-ajax-form data-preserve="true" novalidate data-survey-meta-form>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+            <div class="field" data-field="title">
+              <label class="field__label" for="surveyTitle">Назва</label>
+              <input class="input" id="surveyTitle" name="title" type="text" value="{{ survey.title }}" maxlength="160">
+              <p class="field__error" data-error></p>
+            </div>
+
+            <div class="field" data-field="description">
+              <label class="field__label" for="surveyDescription">Опис</label>
+              <textarea class="textarea" id="surveyDescription" name="description" rows="4" placeholder="Навіщо це опитування і що буде з відповідями">{{ survey.description or '' }}</textarea>
+              <p class="field__error" data-error></p>
+            </div>
+
+            <div class="form-grid">
+              <div class="field" data-field="category_id">
+                <label class="field__label" for="surveyCategory">Категорія</label>
+                <select class="select__native" id="surveyCategory" name="category_id" data-select>
+                  {% for category in categories %}
+                    <option value="{{ category.id }}" {% if category.id == survey.category_id %}selected{% endif %}>{{ category.name }}</option>
+                  {% endfor %}
+                </select>
+                <p class="field__error" data-error></p>
+              </div>
+
+              <div class="field" data-field="status">
+                <label class="field__label" for="surveyStatus">Статус</label>
+                <select class="select__native" id="surveyStatus" name="status" data-select>
+                  <option value="draft" {% if survey.status == 'draft' %}selected{% endif %}>Чернетка</option>
+                  <option value="active" {% if survey.status == 'active' %}selected{% endif %}>Активне</option>
+                  <option value="closed" {% if survey.status == 'closed' %}selected{% endif %}>Завершене</option>
+                </select>
+                <p class="field__error" data-error></p>
+              </div>
+
+              <div class="field" data-field="estimated_minutes">
+                <label class="field__label" for="surveyMinutes">Хвилин на проходження</label>
+                <input class="input" id="surveyMinutes" name="estimated_minutes" type="number" value="{{ survey.estimated_minutes }}" min="1" max="120">
+                <p class="field__error" data-error></p>
+              </div>
+
+              <div class="field" data-field="expires_at">
+                <label class="field__label" for="surveyExpires">Завершити після</label>
+                <div class="date" data-datepicker>
+                  <input type="hidden" name="expires_at" value="{{ survey.expires_at | inputDate }}" data-date-value>
+                  <input class="date__input" id="surveyExpires" type="text" value="{{ survey.expires_at | dotDate }}" placeholder="Без дати" readonly autocomplete="off" data-date-display>
+                  <button class="date__button" type="button" data-date-toggle aria-label="Обрати дату">{{ icon('calendar', 17) }}</button>
+                </div>
+                <p class="field__error" data-error></p>
+              </div>
+            </div>
+
+            <label class="switch" style="margin-top: 16px;">
+              <input type="checkbox" name="is_anonymous" value="true" {% if survey.is_anonymous %}checked{% endif %}>
+              <span class="switch__track"></span>
+              <span class="switch__text">
+                Анонімне опитування
+                <small>Відповіді не прикріплюються до профілів учасників.</small>
+              </span>
+            </label>
+
+            <div class="form-error" data-form-error></div>
+
+            <div class="form-actions">
+              <button class="btn btn--primary" type="submit"><span class="btn__label">Зберегти зміни</span></button>
+            </div>
+          </form>
+
+          <div class="builder__meta">
+            <div class="builder__meta-row"><span>Автор</span><strong>{{ survey.creator.full_name if survey.creator else '—' }}</strong></div>
+            <div class="builder__meta-row"><span>Створено</span><strong>{{ survey.created_at | formatDate }}</strong></div>
+            <div class="builder__meta-row"><span>Анкет</span><strong>{{ attempts }}</strong></div>
+            <div class="builder__meta-row">
+              <span>Посилання</span>
+              <button class="link" type="button" data-copy-link="/surveys/{{ survey.id }}">Скопіювати</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </aside>
+
+    <div class="builder__main">
+      <div id="questions-region">
+        {% include "partials/questions-region.njk" %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<dialog class="modal modal--wide" id="questionDialog">
+  <div class="modal__panel">
+    <div class="modal__head">
+      <div>
+        <h2 data-question-modal-title>Нове питання</h2>
+      </div>
+      <button class="icon-btn" type="button" data-close-dialog aria-label="Закрити">{{ icon('x', 18) }}</button>
+    </div>
+    <p class="modal__sub" data-question-modal-sub>Сформулюйте питання так, як поставили б його живій людині.</p>
+
+    <form method="post" action="/studio/surveys/{{ survey.id }}/questions" data-ajax-form data-question-form data-region="#questions-region" novalidate>
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+      <div class="modal__body">
+        <div class="field" data-field="question_text">
+          <label class="field__label" for="questionText">Питання</label>
+          <textarea class="textarea" id="questionText" name="question_text" rows="3" placeholder="Що саме хочете дізнатися?"></textarea>
+          <p class="field__error" data-error></p>
+        </div>
+
+        <div class="field" data-field="question_type">
+          <span class="field__label">Тип відповіді</span>
+          <div class="type-grid">
+            <label class="type-option">{{ icon('list', 16) }}<input type="radio" name="question_type" value="single_choice" checked><span>Один варіант</span></label>
+            <label class="type-option">{{ icon('grid', 16) }}<input type="radio" name="question_type" value="multiple_choice"><span>Кілька варіантів</span></label>
+            <label class="type-option">{{ icon('edit', 16) }}<input type="radio" name="question_type" value="text"><span>Текст</span></label>
+            <label class="type-option">{{ icon('chart', 16) }}<input type="radio" name="question_type" value="rating"><span>Шкала 1–10</span></label>
+          </div>
+          <p class="field__error" data-error></p>
+        </div>
+
+        <div class="field" data-field="hint">
+          <label class="field__label" for="questionHint">Підказка <span class="muted">(необов’язково)</span></label>
+          <input class="input" id="questionHint" name="hint" type="text" maxlength="255" placeholder="Наприклад: оберіть найближчий варіант">
+          <p class="field__error" data-error></p>
+        </div>
+
+        <div class="field" data-options-field>
+          <span class="field__label">Варіанти відповідей</span>
+          <div class="option-editor" data-option-editor></div>
+          <button class="btn btn--quiet btn--sm" type="button" data-add-option style="justify-self: start;">{{ icon('plus', 14) }} Додати варіант</button>
+          <p class="field__error" data-error></p>
+        </div>
+
+        <label class="switch">
+          <input type="checkbox" name="is_required" value="true" checked>
+          <span class="switch__track"></span>
+          <span class="switch__text">Обов’язкове питання<small>Без відповіді анкету не можна надіслати.</small></span>
+        </label>
+
+        <div class="form-error" data-form-error></div>
+      </div>
+
+      <div class="modal__foot">
+        <button class="btn btn--quiet" type="button" data-close-dialog>Скасувати</button>
+        <button class="btn btn--primary" type="submit"><span class="btn__label">Зберегти питання</span></button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+{% if canCopy %}
+  <dialog class="modal" id="copySurveyDialog">
+    <div class="modal__panel">
+      <div class="modal__head">
+        <div><h2>Копіювати опитування</h2></div>
+        <button class="icon-btn" type="button" data-close-dialog aria-label="Закрити">{{ icon('x', 18) }}</button>
+      </div>
+      <p class="modal__sub">Копія отримає питання й варіанти, але не відповіді. Новий автор зможе змінювати її незалежно.</p>
+      <form method="post" action="/studio/surveys/{{ survey.id }}/copy" data-ajax-form data-redirect-on-success novalidate>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        <div class="modal__body">
+          <div class="field" data-field="creator_id">
+            <label class="field__label" for="copyCreator">Новий автор</label>
+            <select class="select__native" id="copyCreator" name="creator_id" data-select>
+              {% for creator in creators %}
+                <option value="{{ creator.id }}">{{ creator.full_name }}</option>
+              {% endfor %}
+            </select>
+            <p class="field__error" data-error></p>
+          </div>
+          <div class="field" data-field="title">
+            <label class="field__label" for="copyTitle">Назва копії</label>
+            <input class="input" id="copyTitle" name="title" type="text" value="Копія — {{ survey.title }}" maxlength="255">
+            <p class="field__error" data-error></p>
+          </div>
+          <div class="form-error" data-form-error></div>
+        </div>
+        <div class="modal__foot">
+          <button class="btn btn--quiet" type="button" data-close-dialog>Скасувати</button>
+          <button class="btn btn--primary" type="submit"><span class="btn__label">Створити копію</span></button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+{% endif %}
+{% endblock %}

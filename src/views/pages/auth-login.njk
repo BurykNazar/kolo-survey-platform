@@ -1,0 +1,83 @@
+{% extends "layouts/base.njk" %}
+{% from "partials/mark.njk" import mark %}
+
+{% block bodyClass %}auth-page{% endblock %}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block mainClass %}auth{% endblock %}
+
+{% block content %}
+<section class="auth__side">
+  <a class="brand" href="/">
+    {{ mark(30) }}
+    <span class="brand__name">kolo</span>
+  </a>
+
+  <div class="auth__body">
+    <h1>З поверненням</h1>
+    <p>Увійдіть, щоб бачити свої опитування та відповіді.</p>
+
+    <form class="auth__form" method="post" action="/login" data-ajax-form data-redirect-on-success novalidate>
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+      <input type="hidden" name="returnTo" value="{{ returnTo }}">
+
+      <div class="field {% if errors.email %}is-invalid{% endif %}" data-field="email">
+        <label class="field__label" for="email">Електронна пошта</label>
+        <input class="input" id="email" name="email" type="email" autocomplete="email" placeholder="name@domain.ua" value="{{ values.email or '' }}">
+        <p class="field__error" data-error>{{ errors.email or '' }}</p>
+      </div>
+
+      <div class="field {% if errors.password %}is-invalid{% endif %}" data-field="password">
+        <label class="field__label" for="password">Пароль</label>
+        <div class="password">
+          <input class="input" id="password" name="password" type="password" autocomplete="current-password" placeholder="Ваш пароль">
+          <button class="password__toggle" type="button" data-password-toggle aria-label="Показати пароль">{{ icon('eye', 17) }}</button>
+        </div>
+        <p class="field__error" data-error>{{ errors.password or '' }}</p>
+      </div>
+
+      <div class="form-error {% if errors._global %}is-visible{% endif %}" data-form-error>{{ errors._global or '' }}</div>
+
+      <button class="btn btn--primary btn--block" type="submit">
+        <span class="btn__label">Увійти</span>
+        {{ icon('arrow-right', 17) }}
+      </button>
+    </form>
+
+    <p class="auth__switch">Немає акаунта? <a href="/register{% if returnTo != '/studio' %}?returnTo={{ returnTo | urlencode }}{% endif %}">Зареєструватися</a></p>
+  </div>
+</section>
+
+<aside class="auth__aside">
+  {% if showcase %}
+    <div class="auth__card">
+      <span class="chip chip--soft">{{ showcase.survey.category.name if showcase.survey.category else 'Каталог' }}</span>
+      <h2>{{ showcase.survey.title }}</h2>
+      {% if showcase.question %}
+        <p class="specimen__label" style="margin-top: 18px;">{{ showcase.question.question_text }}</p>
+        {% if showcase.question.question_type == 'single_choice' %}
+          <div class="auth__options">
+            {% for option in showcase.question.options %}
+              {% if loop.index <= 4 %}<span class="auth__option">{{ option.option_text }}</span>{% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endif %}
+      <div class="auth__card-foot">
+        <span>{{ showcase.attempts }} {{ showcase.attempts | responseWord }}</span>
+        <a class="link" href="/surveys/{{ showcase.survey.id }}">Відкрити {{ icon('arrow-right', 14) }}</a>
+      </div>
+    </div>
+  {% else %}
+    <div class="auth__card">
+      <span class="chip chip--soft">Kolo</span>
+      <h2>Питання, які варто поставити своїй аудиторії</h2>
+      <p class="specimen__label" style="margin-top: 16px;">Каталог активних опитувань відкритий без реєстрації. Акаунт потрібен, щоб створювати власні.</p>
+      <div class="auth__card-foot">
+        <span>Kolo</span>
+        <a class="link" href="/surveys">До каталогу {{ icon('arrow-right', 14) }}</a>
+      </div>
+    </div>
+  {% endif %}
+</aside>
+{% endblock %}

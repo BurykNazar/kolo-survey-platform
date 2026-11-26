@@ -1,0 +1,25 @@
+<div class="drawer__head">
+  <div>
+    <h2>{{ attempt.surveyTitle }}</h2>
+    <p class="drawer__meta">
+      {{ attempt.name }} · {{ attempt.answeredAt | formatDateTime }}
+      {% if attempt.anonymous %} · <span class="chip chip--neutral">Анонімно</span>{% endif %}
+    </p>
+  </div>
+  <button class="icon-btn" type="button" data-close-dialog aria-label="Закрити">{{ icon('x', 18) }}</button>
+</div>
+
+<div class="drawer__body">
+  {% for answer in attempt.answers %}
+    <div class="answer">
+      <p class="answer__q">{{ answer.text }}<span class="answer__type">{{ answer.type | surveyTypeLabel }}</span></p>
+      <div class="answer__a">
+        {% for value in answer.values %}
+          <span class="answer__value {% if answer.type == 'text' %}answer__value--text{% endif %}">{{ value }}</span>
+        {% else %}
+          <span class="answer__value">Без відповіді</span>
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+</div>

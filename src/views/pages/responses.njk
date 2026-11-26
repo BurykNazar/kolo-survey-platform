@@ -1,0 +1,118 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="wrap page">
+  <header class="page-head">
+    <div>
+      <p class="page-head__eyebrow">{{ icon('inbox', 14) }} Кабінет</p>
+      <h1>{{ 'Мої відповіді' if mode == 'visitor' else 'Відповіді' }}</h1>
+      <p>
+        {% if mode == 'visitor' %}
+          Кожна анкета, яку ви надіслали. Анонімні відповіді не прикріплюються до вашого профілю.
+        {% else %}
+          Заповнені анкети згруповані за спробами. Відкрийте запис, щоб побачити всі відповіді.
+        {% endif %}
+      </p>
+    </div>
+    {% if mode != 'visitor' %}
+      <div class="page-head__actions">
+        <a class="btn btn--quiet" href="/studio/surveys">{{ icon('list', 16) }} Опитування</a>
+      </div>
+    {% endif %}
+  </header>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="stat__label">Заповнених анкет</span>
+      <span class="stat__value">{{ stats.total }}</span>
+      <span class="stat__note">унікальних спроб</span>
+    </div>
+    <div class="stat">
+      <span class="stat__label">За останній тиждень</span>
+      <span class="stat__value">{{ stats.week }}</span>
+      <span class="stat__note">нових анкет</span>
+    </div>
+    <div class="stat">
+      <span class="stat__label">Анонімних</span>
+      <span class="stat__value">{{ stats.anonymous }}</span>
+      <span class="stat__note">без прив’язки до профілю</span>
+    </div>
+    <div class="stat">
+      <span class="stat__label">Відповідей на анкету</span>
+      <span class="stat__value">{{ stats.averageAnswers }}</span>
+      <span class="stat__note">у середньому</span>
+    </div>
+  </div>
+
+  <div class="toolbar" style="margin-top: 22px;">
+    {% if surveys.length > 1 %}
+      <div class="field" style="width: 240px;">
+        <label class="visually-hidden" for="responseSurveyFilter">Фільтр за опитуванням</label>
+        <select class="select__native" id="responseSurveyFilter" data-select data-response-filter>
+          <option value="">Усі опитування</option>
+          {% for survey in surveys %}
+            <option value="{{ survey.id }}">{{ survey.title }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    {% endif %}
+    <div class="search">
+      {{ icon('search', 16) }}
+      <label class="visually-hidden" for="responseSearch">Пошук відповідей</label>
+      <input class="input" id="responseSearch" type="search" placeholder="Ім’я або пошта" autocomplete="off" data-list-search>
+    </div>
+    <span class="toolbar__spacer"></span>
+    <span class="small muted">{{ attempts.length }} {{ attempts.length | plural('анкета', 'анкети', 'анкет') }}</span>
+  </div>
+
+  {% if attempts.length %}
+    <div class="responses" data-response-list>
+      {% for attempt in attempts %}
+        <article class="attempt" data-attempt data-survey-id="{{ attempt.surveyId }}" data-session-id="{{ attempt.sessionId }}" data-search="{{ (attempt.name ~ ' ' ~ attempt.email ~ ' ' ~ attempt.surveyTitle) | lower }}">
+          <div class="attempt__who">
+            <div class="attempt__name">
+              {{ attempt.name }}
+              {% if attempt.anonymous %}<span class="chip chip--neutral">Анонімно</span>{% endif %}
+              {% if attempt.institution %}<span class="small muted">{{ attempt.institution }}</span>{% endif %}
+            </div>
+            <div class="attempt__survey">{{ attempt.surveyTitle }}</div>
+          </div>
+          <div class="attempt__when">{{ attempt.answeredAt | formatDateTime }}</div>
+          <div class="attempt__count">{{ attempt.answersCount }} {{ attempt.answersCount | responseWord }}</div>
+          <div class="attempt__actions">
+            <button class="btn btn--quiet btn--sm" type="button" data-open-response data-endpoint="/studio/responses/{{ attempt.surveyId }}/{{ attempt.sessionId }}">Переглянути</button>
+            {% if mode != 'visitor' %}
+              <button class="icon-btn icon-btn--danger" type="button" title="Видалити анкету" aria-label="Видалити анкету"
+                      data-confirm
+                      data-confirm-title="Видалити анкету?"
+                      data-confirm-text="Усі {{ attempt.answersCount }} {{ attempt.answersCount | responseWord }} цієї спроби буде видалено. Опитування та інші відповіді залишаться."
+                      data-confirm-label="Видалити анкету"
+                      data-confirm-endpoint="/studio/responses/delete"
+                      data-confirm-body='{"survey_id": {{ attempt.surveyId }}, "session_id": "{{ attempt.sessionId }}"}'
+                      data-remove-target="[data-session-id='{{ attempt.sessionId }}']">{{ icon('trash', 16) }}</button>
+            {% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state" style="background: var(--surface); border: 1px solid var(--line); border-radius: 20px; margin-top: 8px;">
+      <span class="empty-state__mark">{{ icon('inbox', 24) }}</span>
+      <h2>Відповідей поки немає</h2>
+      <p>{% if mode == 'visitor' %}Пройдіть перше опитування в каталозі — відповіді з’являться тут.{% else %}Поділіться посиланням на активне опитування, щоб отримати перші анкети.{% endif %}</p>
+      <a class="btn btn--primary btn--sm" href="/surveys">{{ 'До каталогу' if mode == 'visitor' else 'Подивитися каталог' }}</a>
+    </div>
+  {% endif %}
+</div>
+
+<dialog class="drawer" id="responseDrawer">
+  <div class="drawer__panel">
+    <div data-drawer-content>
+      <div class="empty-state" style="padding: 48px 0;">
+        <span class="empty-state__mark">{{ icon('inbox', 22) }}</span>
+        <p>Завантажуємо відповіді…</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+{% endblock %}

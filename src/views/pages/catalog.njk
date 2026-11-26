@@ -1,0 +1,63 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="wrap">
+  <header class="catalog-head">
+    <p class="eyebrow">Каталог</p>
+    <h1>Опитування, до яких можна долучитися</h1>
+    <p>Активні дослідження команд, установ і громад. Відповіді збираються до дати, яку автор вказав під час публікації.</p>
+  </header>
+
+  <div class="catalog-toolbar">
+    <div class="filter-chips" aria-label="Фільтр за темою">
+      <a class="filter-chip {% if not activeCategory %}is-active{% endif %}" href="/surveys">Усі <span>{{ totalActive }}</span></a>
+      {% for category in categories %}
+        <a class="filter-chip {% if activeCategory == category.code %}is-active{% endif %}" href="/surveys?category={{ category.code }}">{{ category.name }} <span>{{ category.active_surveys }}</span></a>
+      {% endfor %}
+    </div>
+
+    <div class="search">
+      {{ icon('search', 16) }}
+      <label class="visually-hidden" for="catalogSearch">Пошук опитувань</label>
+      <input class="input" id="catalogSearch" type="search" placeholder="Пошук за назвою" autocomplete="off" data-catalog-search>
+    </div>
+  </div>
+
+  <div class="catalog-grid" data-catalog-grid>
+    {% for survey in surveys %}
+      <a class="survey-card" href="/surveys/{{ survey.id }}"
+         data-card
+         data-search="{{ (survey.title ~ ' ' ~ (survey.category.name if survey.category else '') ~ ' ' ~ (survey.description or '')) | lower }}">
+        <div>
+          <div class="survey-card__top">
+            <span class="chip chip--soft">{{ survey.category.name if survey.category else 'Без теми' }}</span>
+            {% if survey.is_anonymous %}
+              <span class="chip chip--positive">Анонімно</span>
+            {% endif %}
+          </div>
+          <h3>{{ survey.title }}</h3>
+          <p class="survey-card__meta">
+            <span>{{ icon('list', 14) }} {{ survey.questions.length }} {{ survey.questions.length | questionWord }}</span>
+            <span>{{ icon('clock', 14) }} {{ survey.estimated_minutes }} хв</span>
+            <span>{{ icon('users', 14) }} {{ counts[survey.id] or 0 }}</span>
+            {% if survey.expires_at %}
+              <span>{{ icon('calendar', 14) }} до {{ survey.expires_at | formatShortDate }}</span>
+            {% endif %}
+          </p>
+        </div>
+        <div class="survey-card__foot">
+          <span>{{ 'Заповнити анкету' if not survey.is_anonymous else 'Відповісти анонімно' }}</span>
+          <span class="survey-card__go">{{ icon('arrow-right', 16) }}</span>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+
+  <div class="empty-state {% if surveys.length > 0 %}is-hidden{% endif %}" data-catalog-empty>
+    <span class="empty-state__mark">{{ icon('search', 24) }}</span>
+    <h2>Нічого не знайшли</h2>
+    <p data-catalog-empty-text>{% if surveys.length == 0 %}У цій темі поки немає активних опитувань. Зазирніть в іншу або поверніться пізніше.{% else %}Спробуйте інший запит або оберіть іншу тему.{% endif %}</p>
+    <a class="btn btn--quiet" href="/surveys">Показати всі</a>
+  </div>
+</div>
+{% endblock %}
