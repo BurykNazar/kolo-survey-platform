@@ -23,6 +23,9 @@ document.addEventListener('click', async (event) => {
   const url = new URL(trigger.dataset.copyLink, window.location.origin).toString();
   try {
     await navigator.clipboard.writeText(url);
+    if (!trigger.dataset.label) trigger.dataset.label = trigger.textContent;
+    trigger.textContent = 'Скопійовано';
+    setTimeout(() => { trigger.textContent = trigger.dataset.label; }, 1600);
     showToast('Посилання скопійовано.');
   } catch {
     showToast(url);

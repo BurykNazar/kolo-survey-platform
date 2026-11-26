@@ -11,6 +11,7 @@ import './confirm.js';
 import './filters.js';
 import './copy.js';
 import './counters.js';
+import './motion.js';
 import './survey-runner.js';
 import './builder.js';
 import './categories.js';

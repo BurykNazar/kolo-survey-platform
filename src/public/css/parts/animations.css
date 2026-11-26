@@ -1,0 +1,61 @@
+/* Page-level entrances, card stagger and chart growth. Motion only, no colour changes. */
+
+.page-head > div:first-child,
+.catalog-head,
+.runner__head,
+.auth__body,
+.error-page > div {
+  animation: rise 380ms var(--ease-out) both;
+}
+
+.page-head__actions {
+  animation: rise 380ms var(--ease-out) 70ms both;
+}
+
+.cards-3 .survey-card,
+.catalog-grid .survey-card {
+  animation: rise 420ms var(--ease-out) both;
+}
+
+.cards-3 .survey-card:nth-child(2),
+.catalog-grid .survey-card:nth-child(2) { animation-delay: 50ms; }
+.cards-3 .survey-card:nth-child(3),
+.catalog-grid .survey-card:nth-child(3) { animation-delay: 100ms; }
+.catalog-grid .survey-card:nth-child(4) { animation-delay: 140ms; }
+.catalog-grid .survey-card:nth-child(5) { animation-delay: 180ms; }
+.catalog-grid .survey-card:nth-child(6) { animation-delay: 220ms; }
+
+.auth__card {
+  animation: rise 480ms var(--ease-out) 80ms both;
+}
+
+.chart__bar {
+  transform-origin: bottom center;
+  animation: grow-bar 620ms var(--ease-out) both;
+}
+
+.chart__col:nth-child(2) .chart__bar { animation-delay: 40ms; }
+.chart__col:nth-child(3) .chart__bar { animation-delay: 80ms; }
+.chart__col:nth-child(4) .chart__bar { animation-delay: 120ms; }
+.chart__col:nth-child(5) .chart__bar { animation-delay: 160ms; }
+.chart__col:nth-child(6) .chart__bar { animation-delay: 200ms; }
+.chart__col:nth-child(7) .chart__bar { animation-delay: 240ms; }
+
+.q {
+  animation: rise 320ms var(--ease-out) both;
+  animation-delay: calc((var(--i, 1) - 1) * 35ms);
+}
+
+.qitem {
+  animation: rise 260ms var(--ease-out) both;
+}
+
+.qitem:nth-child(2) { animation-delay: 35ms; }
+.qitem:nth-child(3) { animation-delay: 70ms; }
+.qitem:nth-child(4) { animation-delay: 105ms; }
+.qitem:nth-child(5) { animation-delay: 140ms; }
+
+@keyframes grow-bar {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}

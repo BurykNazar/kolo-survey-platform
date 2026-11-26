@@ -30,7 +30,11 @@ export async function getLanding(req, res, next) {
     const ranked = [...surveys].sort((a, b) => (attempts.get(b.id) || 0) - (attempts.get(a.id) || 0));
     const featured = ranked.slice(0, 3);
 
-    const showcase = ranked.find((survey) => survey.questions.some((question) => question.question_type === 'rating')) || ranked[0] || null;
+    const ratingCandidates = ranked.filter((survey) =>
+      survey.questions.some((question) => question.question_type === 'rating')
+    );
+    const showcasePool = ratingCandidates.length > 0 ? ratingCandidates : ranked;
+    const showcase = showcasePool[Math.floor(Math.random() * showcasePool.length)] || null;
     let showcaseQuestion = null;
     if (showcase) {
       showcaseQuestion =

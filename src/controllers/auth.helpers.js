@@ -2,15 +2,21 @@ import { Survey, SurveyCategory, Question, AnswerOption, SurveyResult } from '..
 import { safeReturnTo } from '../lib/validation.js';
 
 export async function authShowcase() {
-  const survey = await Survey.findOne({
+  const surveys = await Survey.findAll({
     where: { status: 'active' },
     include: [
       { model: SurveyCategory, as: 'category' },
       { model: Question, as: 'questions', include: [{ model: AnswerOption, as: 'options' }] }
     ],
-    order: [['created_at', 'DESC']]
+    order: [['id', 'ASC']]
   });
-  if (!survey) return null;
+  if (surveys.length === 0) return null;
+
+  const withChoice = surveys.filter((survey) =>
+    (survey.questions || []).some((question) => question.question_type === 'single_choice')
+  );
+  const pool = withChoice.length > 0 ? withChoice : surveys;
+  const survey = pool[Math.floor(Math.random() * pool.length)];
 
   const attempts = await SurveyResult.count({
     where: { survey_id: survey.id },

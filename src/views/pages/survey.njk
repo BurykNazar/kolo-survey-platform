@@ -50,7 +50,7 @@
       {% for question in survey.questions %}
         {% set key = 'q_' ~ question.id %}
         {% set hasError = errors[key] %}
-        <section class="q {% if hasError %}is-invalid{% endif %}" data-question data-question-id="{{ question.id }}" data-type="{{ question.question_type }}">
+        <section class="q {% if hasError %}is-invalid{% endif %}" data-question data-question-id="{{ question.id }}" data-type="{{ question.question_type }}" style="--i: {{ loop.index }}">
           <div class="q__head">
             <span class="q__num">{{ loop.index | pad2 }}</span>
             <div class="q__main">

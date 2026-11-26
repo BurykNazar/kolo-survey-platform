@@ -33,7 +33,8 @@ npm run dev
 
 `npm run db:setup` створює схему та наповнює її демонстраційними даними, якщо база
 порожня. Паролі згенерованих акаунтів друкуються в консоль і записуються у
-`credentials.local.md` (файл у `.gitignore`). Повторне створення з нуля:
+`credentials.local.md` (файл у `.gitignore`). Готовий список демо-акаунтів для живого
+сайту — `DEMO-ACCESS.md`. Повторне створення з нуля:
 
 ```powershell
 npm run db:reset
@@ -64,17 +65,13 @@ src/
   public/js/app.js        точка входу; модулі поруч (core, selects, forms, builder, …)
   views/pages, partials   сторінки та винесені фрагменти
 scripts/
-  data/                   демо-дані: категорії, люди, по одному файлу на опитування
-  lib/                    спільні хелпери для сіду та тестів
+  data/                   демо-дані: JSON-файли категорій, людей і опитувань
+  lib/                    спільні хелпери для сіду
 ```
 
 Кожен файл у `src/` і `scripts/` — не більше **200 рядків**. Це стосується CSS, JS,
-Nunjucks, конфігурацій і тестів; виняток — `README.md` і згенерований
-`package-lock.json`. Перевірка:
-
-```powershell
-npm run check:sizes
-```
+Nunjucks, конфігурацій і демо-даних; виняток — `README.md` і згенерований
+`package-lock.json`.
 
 CSS не збирається бандлером: `kolo.css` лише імпортує частини. JS — нативні ES-модулі,
 які підключає `app.js`.
@@ -154,10 +151,3 @@ Free Postgres на Render має обмежений термін життя, т�
 | `npm run dev` | запуск із перезапуском |
 | `npm run db:setup` | схема + сід, якщо база порожня |
 | `npm run db:reset` | перестворити схему й демо-дані |
-| `npm run test:flows` | наскрізні сценарії в headless Chrome |
-| `npm run test:api` | перевірка JWT API та CSRF |
-| `npm run test:users` | реєстрація, зміна пароля, учасник, гість |
-| `npm run check:sizes` | перевірка ліміту 200 рядків на файл |
-| `npm run shoot` | скріншоти сторінок у `shots/` |
-
-Тестові сценарії потребують запущеного сервера та `credentials.local.md`.

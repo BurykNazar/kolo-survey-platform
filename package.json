@@ -14,11 +14,6 @@
     "db:setup": "node scripts/setup-db.mjs",
     "db:seed": "node scripts/seed.mjs",
     "db:reset": "node scripts/setup-db.mjs --reset",
-    "test:flows": "node scripts/test-flows.mjs",
-    "test:api": "node scripts/test-api.mjs",
-    "test:users": "node scripts/test-user-flows.mjs",
-    "shoot": "node scripts/shoot.mjs",
-    "check:sizes": "node scripts/check-file-sizes.mjs",
     "check": "node --check src/server.js"
   },
   "author": "Бурик Назар",
@@ -41,7 +36,6 @@
     "sequelize": "^6.37.8"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14",
-    "playwright-core": "^1.65.1"
+    "nodemon": "^3.1.14"
   }
 }
