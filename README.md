@@ -1,5 +1,7 @@
 # Kolo — платформа онлайн-опитувань
 
+**Демо:** https://kolo-survey-platform.onrender.com
+
 Kolo збирає відповіді команд, клієнтів і громад в одному місці: каталог опитувань,
 конструктор анкет, проходження без реєстрації, журнал відповідей і рольовий кабінет.
 
@@ -97,14 +99,26 @@ CSRF-токеном; це сесійний, а не JWT-маршрут.
 
 ## Деплой на Render
 
-`render.yaml` описує web-сервіс:
+`render.yaml` описує одразу базу й сервіс:
 
-- build: `npm ci --omit=dev && npm run db:setup`
-- start: `npm start`
-- health check: `/healthz`
+- Render Postgres `kolo-db` (Frankfurt, безкоштовний план) — тимчасова база до переходу на Neon;
+- web service `kolo-survey-platform` (Node, free, Frankfurt);
+- build: `npm ci --omit=dev && npm run db:setup` — створює схему й сідить порожню базу;
+- start: `npm start`;
+- health check: `/healthz`.
 
-У Render Dashboard задайте `DATABASE_URL` (Neon, direct connection) та `APP_ORIGIN`
-(публічна адреса сервісу). `SESSION_SECRET` і `JWT_SECRET` Render згенерує сам.
+Після першого білду паролі демо-акаунтів друкуються в логах деплою; локальна копія
+лежить у `credentials.production.md` (файл у `.gitignore`). Безкоштовний сервіс
+засинає після простою, тому перший запит може тривати до хвилини.
+
+### Перехід на Neon
+
+1. Створіть проєкт у Neon і скопіюйте **direct** connection string із `?sslmode=require`.
+2. У Render → Environment замініть `DATABASE_URL` на цей рядок і збережіть.
+3. Новий деплой виконає `db:setup` уже на Neon; код змін не потребує.
+4. Переконайтеся, що вхід і відповіді працюють, після чого видаліть Render Postgres.
+
+Free Postgres на Render має обмежений термін життя, тому Neon лишається цільовою базою.
 
 ## Скрипти
 
