@@ -5,7 +5,7 @@
 Kolo збирає відповіді команд, клієнтів і громад в одному місці: каталог опитувань,
 конструктор анкет, проходження після входу, автозбереження чернеток, журнал відповідей і рольовий кабінет.
 
-Стек: **Express 5 · Nunjucks · Sequelize · PostgreSQL (Neon) · Render**.
+Стек: **Express 5 · Nunjucks · Sequelize · PostgreSQL · Render**.
 Інтерфейс — українською, дизайн-система — власна (Unbounded + Onest, папір / ліс / лайм).
 
 ## Можливості
@@ -46,7 +46,7 @@ npm run db:reset
 
 | Змінна | Призначення |
 | --- | --- |
-| `DATABASE_URL` | рядок підключення Neon Postgres, наприклад `postgresql://…?sslmode=require` |
+| `DATABASE_URL` | рядок підключення PostgreSQL (Render), наприклад `postgresql://…?sslmode=require` |
 | `SESSION_SECRET` | секрет підпису сесій, ≥ 32 символи |
 | `JWT_SECRET` | секрет JWT, ≥ 32 символи |
 | `APP_ORIGIN` | публічна адреса застосунку (на Render підхоплюється `RENDER_EXTERNAL_URL`) |
@@ -54,7 +54,7 @@ npm run db:reset
 | `NODE_ENV` | `production` на Render |
 
 Локальна база не є частиною застосунку: код читає лише `DATABASE_URL`. Для розробки
-можна вказати локальний PostgreSQL або окрему гілку Neon.
+можна вказати локальний PostgreSQL або окрему базу PostgreSQL.
 
 ## Структура
 
@@ -126,24 +126,28 @@ CSRF-токеном; це сесійний, а не JWT-маршрут.
 
 `render.yaml` описує одразу базу й сервіс:
 
-- Render Postgres `kolo-db` (Frankfurt, безкоштовний план) — тимчасова база до переходу на Neon;
-- web service `kolo-survey-platform` (Node, free, Frankfurt);
+- Render Postgres `kolo-db` (Frankfurt) — база застосунку;
+- web service `kolo-survey-platform` (Node, Frankfurt);
 - build: `npm ci --omit=dev && npm run db:setup` — створює схему й сідить порожню базу;
 - start: `npm start`;
 - health check: `/healthz`.
 
 Після першого білду паролі демо-акаунтів друкуються в логах деплою; локальна копія
-лежить у `credentials.production.md` (файл у `.gitignore`). Безкоштовний сервіс
-засинає після простою, тому перший запит може тривати до хвилини.
+лежить у `DEMO-ACCESS.md`.
 
-### Перехід на Neon
+### Keep-alive
 
-1. Створіть проєкт у Neon і скопіюйте **direct** connection string із `?sslmode=require`.
-2. У Render → Environment замініть `DATABASE_URL` на цей рядок і збережіть.
-3. Новий деплой виконає `db:setup` уже на Neon; код змін не потребує.
-4. Переконайтеся, що вхід і відповіді працюють, після чого видаліть Render Postgres.
+Безкоштовний web service на Render засинає після 15 хвилин простою. Щоб сайт і база
+не охолоджувалися, у репозиторії є `.github/workflows/keep-alive.yml`: GitHub Actions
+раз на 5 хвилин викликає `/healthz`. Цей маршрут виконує `SELECT 1`, тому одночасно
+тримає активною і базу. Окремого акаунта не потрібно — використовується GitHub, у
+якому вже живе репозиторій.
 
-Free Postgres на Render має обмежений термін життя, тому Neon лишається цільовою базою.
+Якщо GitHub затримає scheduled-запуск, перший запит після сну все одно розбудить
+сервіс (може тривати до хвилини). GitHub вимикає schedule після 60 днів без
+активності репозиторію — тоді workflow можна запустити вручну з вкладки Actions. Для гарантії без сну взагалі потрібен платний
+інстанс Render; безкоштовна Postgres також має обмежений термін життя, тому для
+постійної бази варто перейти на платний план Render.
 
 ## Скрипти
 
