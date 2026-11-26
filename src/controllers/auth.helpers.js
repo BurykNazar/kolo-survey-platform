@@ -58,6 +58,7 @@ export function respondRegister(req, res, { status = 200, errors = {}, values = 
   }
   return res.status(status).render('pages/auth-register.njk', {
     title: 'Реєстрація — Kolo',
+    returnTo: safeReturnTo(req.body?.returnTo || req.query?.returnTo, '/studio'),
     errors,
     values,
     message

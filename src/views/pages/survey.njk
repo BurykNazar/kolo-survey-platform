@@ -3,7 +3,9 @@
 {% block mainClass %}main runner-page{% endblock %}
 
 {% block content %}
+{% if not locked %}
 <div class="runner-progress" aria-hidden="true"><span data-runner-progress></span></div>
+{% endif %}
 
 <div class="wrap">
   <header class="runner__head">
@@ -11,9 +13,9 @@
       {% if survey.category %}
         <a class="chip chip--soft" href="/surveys?category={{ survey.category.code }}">{{ survey.category.name }}</a>
       {% endif %}
-      <span class="chip chip--{{ 'positive' if open else 'muted' }}">{{ 'Приймає відповіді' if open else 'Попередній перегляд' }}</span>
+      <span class="chip chip--{{ 'positive' if open and not locked else 'muted' }}">{{ 'Потрібен вхід' if locked else ('Приймає відповіді' if open else 'Попередній перегляд') }}</span>
       {% if survey.is_anonymous %}
-        <span class="chip chip--neutral">Анонімно</span>
+        <span class="chip chip--neutral">Можна анонімно</span>
       {% endif %}
     </div>
 
@@ -33,7 +35,18 @@
     </div>
   </header>
 
-  {% if preview %}
+  {% if locked %}
+    <section class="gate">
+      <span class="gate__mark">{{ icon('lock', 26) }}</span>
+      <h2>Увійдіть, щоб пройти опитування</h2>
+      <p>Каталог відкритий для перегляду, але відповіді приймаються лише від авторизованих учасників. Після входу чернетка збережеться автоматично.</p>
+      <div class="gate__actions">
+        <a class="btn btn--primary" href="/login?returnTo={{ ('/surveys/' ~ survey.id) | urlencode }}">Увійти {{ icon('arrow-right', 16) }}</a>
+        <a class="btn btn--quiet" href="/register?returnTo={{ ('/surveys/' ~ survey.id) | urlencode }}">Створити акаунт</a>
+      </div>
+    </section>
+  {% else %}
+    {% if preview %}
     <div class="form-error is-visible" style="max-width: 780px; margin: 0 auto 16px;">
       {% if survey.status == 'draft' %}Це чернетка. Учасники не бачать її в каталозі, а відповіді не приймаються.{% else %}Опитування завершене. Відповіді більше не приймаються.{% endif %}
     </div>
@@ -43,7 +56,7 @@
     <div class="form-error is-visible" style="max-width: 780px; margin: 0 auto 16px;">{{ message }}</div>
   {% endif %}
 
-  <form class="runner__form" data-survey-form data-survey-id="{{ survey.id }}" data-endpoint="/surveys/{{ survey.id }}/responses" novalidate>
+  <form class="runner__form" data-survey-form data-survey-id="{{ survey.id }}" data-endpoint="/surveys/{{ survey.id }}/responses" data-draft-endpoint="{% if open %}/surveys/{{ survey.id }}/draft{% endif %}" novalidate>
     <input type="hidden" name="_csrf" value="{{ csrfToken }}">
     <fieldset class="runner-fieldset" {% if preview %}disabled{% endif %} style="border:0; padding:0; margin:0; min-width:0;">
 
@@ -75,7 +88,7 @@
               <div class="choice-list">
                 {% for option in question.options %}
                   <label class="choice choice--multi" for="opt_{{ option.id }}">
-                    <input type="checkbox" id="opt_{{ option.id }}" name="{{ key }}" value="{{ option.id }}">
+                    <input type="checkbox" id="opt_{{ option.id }}" name="{{ key }}" value="{{ option.id }}" {% if values[key] and (option.id | string) in values[key] %}checked{% endif %}>
                     <span class="choice__dot"></span>
                     <span>{{ option.option_text }}</span>
                   </label>
@@ -106,28 +119,31 @@
         </section>
       {% endfor %}
 
-      {% if isAuthed and not survey.is_anonymous %}
+      {% if survey.is_anonymous %}
         <label class="anon-toggle">
           <span class="switch">
-            <input type="checkbox" name="is_anonymous" value="true">
+            <input type="checkbox" name="is_anonymous" value="true" {% if anonymousChoice %}checked{% endif %}>
             <span class="switch__track"></span>
           </span>
           <span class="switch__text">
-            Відповісти анонімно
-            <small>Автор не побачить вашого імені та пошти. Позначку про анонімність побачать усі, хто має доступ до відповідей.</small>
+            Пройти анонімно
+            <small>Автор дозволив анонімну участь. Якщо вимкнете — автор побачить ваше ім’я та пошту.</small>
           </span>
         </label>
-      {% elif survey.is_anonymous %}
+      {% else %}
         <div class="anon-toggle">
           <span class="switch__text">
-            Це анонімне опитування
-            <small>Відповіді не прикріплюються до вашого профілю. Позначку про анонімність побачать усі, хто має доступ до результатів.</small>
+            Іменна участь
+            <small>Це опитування не анонімне: автор побачить ваше ім’я та пошту.</small>
           </span>
         </div>
       {% endif %}
 
       <div class="runner__actions">
-        <p class="runner__actions-note">Відповіді одразу потрапляють до автора. Змінити їх після надсилання не можна.</p>
+        <div class="runner__notes">
+          <p class="runner__actions-note">Відповіді одразу потрапляють до автора. Змінити їх після надсилання не можна.</p>
+          {% if not preview %}<p class="runner__draft" data-draft-status>{% if draftRestored %}Відповіді відновлено{% else %}Відповіді зберігаються автоматично{% endif %}</p>{% endif %}
+        </div>
         <div class="runner__submit">
           <a class="btn btn--quiet" href="/surveys">Скасувати</a>
           <button class="btn btn--primary" type="submit" data-submit>
@@ -138,5 +154,6 @@
       </div>
     </fieldset>
   </form>
+  {% endif %}
 </div>
 {% endblock %}

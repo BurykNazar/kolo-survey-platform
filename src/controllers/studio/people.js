@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { Survey, SurveyResult, User } from '../../db/models.js';
 import { validateUserInput } from '../../lib/validation.js';
+import { deleteDraftsForUser } from '../../services/drafts.js';
 import { deny, done, reject, renderHtml } from './shared.js';
 
 // ── Люди ─────────────────────────────────────────────────────────────────────
@@ -136,6 +137,7 @@ export async function removePerson(req, res, next) {
     // Звільняємо зв’язки, щоб не втратити чужі опитування й відповіді
     await Survey.update({ creator_id: req.user.id }, { where: { creator_id: person.id } });
     await SurveyResult.update({ user_id: null, is_anonymous: true }, { where: { user_id: person.id } });
+    await deleteDraftsForUser(person.id);
     await person.destroy();
 
     return done(req, res, { message: 'Користувача видалено.', html: await peopleRows(req, res) });

@@ -7,6 +7,53 @@ const surveyForm = document.querySelector('[data-survey-form]');
 if (surveyForm) {
   const questions = [...surveyForm.querySelectorAll('[data-question]')];
   const progress = document.querySelector('[data-runner-progress]');
+  const draftEndpoint = surveyForm.dataset.draftEndpoint;
+  const draftStatus = document.querySelector('[data-draft-status]');
+  let draftTimer = null;
+  let draftDirty = false;
+
+  const draftBody = () => {
+    const body = new URLSearchParams(new FormData(surveyForm));
+    body.set('_csrf', csrf());
+    return body;
+  };
+
+  const persistDraft = async () => {
+    if (!draftEndpoint || !draftDirty) return;
+    draftDirty = false;
+    if (draftStatus) draftStatus.textContent = 'Зберігаємо…';
+    try {
+      const response = await fetch(draftEndpoint, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'X-Requested-With': 'fetch' },
+        body: draftBody()
+      });
+      const data = await response.json().catch(() => null);
+      if (draftStatus) draftStatus.textContent = data?.ok ? 'Збережено' : 'Не вдалося зберегти';
+      if (!data?.ok) draftDirty = true;
+    } catch {
+      if (draftStatus) draftStatus.textContent = 'Не вдалося зберегти';
+      draftDirty = true;
+    }
+  };
+
+  const scheduleDraft = () => {
+    if (!draftEndpoint) return;
+    draftDirty = true;
+    if (draftStatus) draftStatus.textContent = 'Є незбережені зміни';
+    clearTimeout(draftTimer);
+    draftTimer = setTimeout(persistDraft, 600);
+  };
+
+  window.addEventListener('pagehide', () => {
+    if (!draftEndpoint || !draftDirty) return;
+    fetch(draftEndpoint, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'X-Requested-With': 'fetch' },
+      body: draftBody(),
+      keepalive: true
+    }).catch(() => {});
+  });
 
   const updateProgress = () => {
     if (!progress) return;
@@ -21,11 +68,13 @@ if (surveyForm) {
 
   surveyForm.addEventListener('change', (event) => {
     updateProgress();
+    scheduleDraft();
     const question = event.target.closest('[data-question]');
     if (question) question.classList.remove('is-invalid');
   });
   surveyForm.addEventListener('input', (event) => {
     updateProgress();
+    scheduleDraft();
     const question = event.target.closest('[data-question]');
     if (question) question.classList.remove('is-invalid');
   });
@@ -33,6 +82,8 @@ if (surveyForm) {
 
   surveyForm.addEventListener('submit', async (event) => {
     event.preventDefault();
+    clearTimeout(draftTimer);
+    draftDirty = false;
     const submit = surveyForm.querySelector('[data-submit]');
     setLoading(submit, true);
 
@@ -72,6 +123,10 @@ if (surveyForm) {
         }
 
         if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (draftEndpoint) {
+          draftDirty = true;
+          scheduleDraft();
+        }
         showToast(data.message || 'Перевірте виділені питання.', 'error');
         return;
       }

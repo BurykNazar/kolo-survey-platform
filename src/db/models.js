@@ -134,6 +134,21 @@ export const SurveyResult = sequelize.define(
   }
 );
 
+export const SurveyDraft = sequelize.define(
+  'survey_drafts',
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    survey_id: { type: DataTypes.INTEGER, allowNull: false },
+    user_id: { type: DataTypes.INTEGER, allowNull: false },
+    payload: { type: DataTypes.JSONB, allowNull: false, defaultValue: {} },
+    updated_at: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW }
+  },
+  {
+    tableName: 'survey_drafts',
+    indexes: [{ unique: true, fields: ['survey_id', 'user_id'] }]
+  }
+);
+
 SurveyCategory.hasMany(Survey, { foreignKey: 'category_id', as: 'surveys' });
 Survey.belongsTo(SurveyCategory, { foreignKey: 'category_id', as: 'category' });
 
@@ -158,4 +173,10 @@ SurveyResult.belongsTo(AnswerOption, { foreignKey: 'option_id', as: 'chosenOptio
 User.hasMany(SurveyResult, { foreignKey: 'user_id', as: 'responses' });
 SurveyResult.belongsTo(User, { foreignKey: 'user_id', as: 'respondent' });
 
-export const models = { User, SurveyCategory, Survey, Question, AnswerOption, SurveyResult };
+Survey.hasMany(SurveyDraft, { foreignKey: 'survey_id', as: 'drafts' });
+SurveyDraft.belongsTo(Survey, { foreignKey: 'survey_id', as: 'survey' });
+
+User.hasMany(SurveyDraft, { foreignKey: 'user_id', as: 'drafts' });
+SurveyDraft.belongsTo(User, { foreignKey: 'user_id', as: 'respondent' });
+
+export const models = { User, SurveyCategory, Survey, Question, AnswerOption, SurveyResult, SurveyDraft };

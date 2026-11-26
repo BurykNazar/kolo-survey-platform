@@ -1,14 +1,10 @@
-import crypto from 'crypto';
 import {
   Survey,
   SurveyCategory,
-  Question,
-  SurveyResult
+  Question
 } from '../db/models.js';
-import { activeSurveyWhere, canManageSurvey, isOpen, loadSurveyBundle, attemptsBySurvey, categoryCounts } from '../services/surveys.js';
+import { activeSurveyWhere, attemptsBySurvey, categoryCounts } from '../services/surveys.js';
 import { totalsFor } from '../services/stats.js';
-import { validateAnswers } from '../lib/validation.js';
-import { renderSurveyPage, renderView } from './public.helpers.js';
 
 export async function getLanding(req, res, next) {
   try {
@@ -96,89 +92,6 @@ export async function getCatalog(req, res, next) {
       totalActive,
       totals,
       activeCategory: categoryCode
-    });
-  } catch (error) {
-    return next(error);
-  }
-}
-
-export async function getSurvey(req, res, next) {
-  try {
-    return await renderSurveyPage(req, res);
-  } catch (error) {
-    return next(error);
-  }
-}
-
-export async function submitSurvey(req, res, next) {
-  try {
-    const survey = await loadSurveyBundle(req.params.id);
-    if (!survey) {
-      return res.status(404).json({ ok: false, message: 'Опитування не знайдено.' });
-    }
-
-    const manager = canManageSurvey(req.user, survey);
-    if (!isOpen(survey)) {
-      return res.status(409).json({ ok: false, message: 'Опитування вже не приймає відповіді.' });
-    }
-
-    const { errors, answers } = validateAnswers(survey.questions, req.body);
-    if (Object.keys(errors).length > 0) {
-      if (req.wantsJson) {
-        return res.status(422).json({
-          ok: false,
-          message: 'Перевірте відповіді у виділених питаннях.',
-          errors
-        });
-      }
-      return await renderSurveyPage(req, res, {
-        status: 422,
-        errors,
-        values: req.body,
-        message: 'Перевірте відповіді у виділених питаннях.'
-      });
-    }
-
-    const anonymous = Boolean(
-      survey.is_anonymous ||
-        !req.user ||
-        req.body.is_anonymous === 'true' ||
-        req.body.is_anonymous === true ||
-        manager
-    );
-
-    const sessionId = `${req.sessionID || `guest_${crypto.randomBytes(6).toString('hex')}`}_${crypto.randomBytes(4).toString('hex')}`;
-    const userId = anonymous ? null : req.user.id;
-    const answeredAt = new Date();
-
-    const rows = answers.map((answer) => ({
-      survey_id: survey.id,
-      question_id: answer.question.id,
-      option_id: answer.option_id || null,
-      user_id: userId,
-      text_answer: answer.text_answer || null,
-      rating_value: answer.rating_value || null,
-      session_id: sessionId,
-      is_anonymous: anonymous,
-      answered_at: answeredAt
-    }));
-
-    await SurveyResult.bulkCreate(rows);
-
-    if (!req.wantsJson) {
-      return res.redirect(`/surveys?ok=${encodeURIComponent('Відповіді прийнято. Дякуємо!')}`);
-    }
-
-    const html = await renderView(res, 'partials/survey-thanks.njk', {
-      survey,
-      anonymous,
-      answeredAt
-    });
-
-    return res.json({
-      ok: true,
-      message: 'Відповіді прийнято. Дякуємо!',
-      html
     });
   } catch (error) {
     return next(error);

@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { Survey, SurveyResult, User } from '../../db/models.js';
 import { validateUserInput } from '../../lib/validation.js';
+import { deleteDraftsForUser } from '../../services/drafts.js';
 import { apiData, apiError } from './shared.js';
 
 export async function apiListUsers(req, res, next) {
@@ -69,6 +70,7 @@ export async function apiDeleteUser(req, res, next) {
     if (!user) return apiError(res, 404, 'Користувача не знайдено.');
     await Survey.update({ creator_id: req.user.id }, { where: { creator_id: user.id } });
     await SurveyResult.update({ user_id: null, is_anonymous: true }, { where: { user_id: user.id } });
+    await deleteDraftsForUser(user.id);
     await user.destroy();
     return apiData(res, { removed: Number(req.params.id) });
   } catch (error) {

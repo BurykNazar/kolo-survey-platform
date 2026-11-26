@@ -8,6 +8,7 @@ import {
   SurveyResult,
   User
 } from '../db/models.js';
+import { deleteDraftsForSurvey } from './drafts.js';
 
 export const activeSurveyWhere = () => ({
   status: 'active',
@@ -168,6 +169,7 @@ export async function syncOptions(questionId, labels, ids = []) {
 }
 
 export async function deleteSurveyCascade(surveyId) {
+  await deleteDraftsForSurvey(surveyId);
   const questions = await Question.findAll({
     where: { survey_id: surveyId },
     attributes: ['id'],

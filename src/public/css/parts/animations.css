@@ -6,7 +6,8 @@
 .auth__body,
 .error-page > div,
 .thanks,
-.closed {
+.closed,
+.gate {
   animation: rise 380ms var(--ease-out) backwards;
 }
 

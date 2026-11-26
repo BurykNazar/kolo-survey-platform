@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authenticateJWT } from '../middleware/auth.js';
-import { submitSurvey } from '../controllers/public.controller.js';
+import { submitSurvey } from '../controllers/survey-take.controller.js';
 import {
   apiLogin,
   apiMe,

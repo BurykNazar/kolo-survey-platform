@@ -51,6 +51,7 @@ export function postLogin(req, res, next) {
 export async function getRegister(req, res) {
   return res.render('pages/auth-register.njk', {
     title: 'Реєстрація — Kolo',
+    returnTo: safeReturnTo(req.query.returnTo, '/studio'),
     errors: {},
     values: {},
     showcase: await authShowcase()
@@ -59,6 +60,7 @@ export async function getRegister(req, res) {
 
 export async function postRegister(req, res, next) {
   const { errors, data } = validateRegistration(req.body);
+  const returnTo = safeReturnTo(req.body.returnTo, '/studio');
   if (Object.keys(errors).length > 0) {
     return respondRegister(req, res, { status: 422, errors, values: { full_name: data.full_name, email: data.email, institution: data.institution } });
   }
@@ -94,10 +96,10 @@ export async function postRegister(req, res, next) {
             return res.json({
               ok: true,
               message: 'Акаунт створено. Вітаємо в Kolo!',
-              redirect: '/studio'
+              redirect: returnTo
             });
           }
-          return res.redirect('/studio?ok=' + encodeURIComponent('Акаунт створено. Вітаємо в Kolo!'));
+          return res.redirect(`${returnTo}${returnTo.includes('?') ? '&' : '?'}ok=${encodeURIComponent('Акаунт створено. Вітаємо в Kolo!')}`);
         }
       );
     });

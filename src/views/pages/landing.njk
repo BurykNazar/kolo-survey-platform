@@ -8,7 +8,7 @@
     <div>
       <p class="eyebrow enter enter--1">Опитування для команд і спільнот</p>
       <h1 class="enter enter--2"><span>Запитайте.</span><span>Почуйте.</span><span>Вирішіть.</span></h1>
-      <p class="hero__lead enter enter--3">Kolo збирає відповіді команди, клієнтів і громади в одному місці. Ви ставите питання — люди відповідають без реєстрації, а ви бачите не таблицю, а картину.</p>
+      <p class="hero__lead enter enter--3">Kolo збирає відповіді команди, клієнтів і громади в одному місці. Ви ставите питання — учасники відповідають, обирають анонімність, а ви бачите не таблицю, а картину.</p>
 
       <div class="hero__actions enter enter--4">
         <a class="btn btn--primary" href="{{ '/studio/surveys?new=1' if isAuthed and currentUser.role != 'visitor' else ('/studio' if isAuthed else '/register') }}">{{ icon('plus', 17) }} Створити опитування</a>
@@ -31,7 +31,7 @@
           <div class="specimen__top">
             <span class="specimen__step">{{ showcase.questions.length }} {{ showcase.questions.length | questionWord }} · {{ showcase.estimated_minutes }} хв</span>
             {% if showcase.is_anonymous %}
-              <span class="chip chip--positive">Анонімно</span>
+              <span class="chip chip--positive">Можна анонімно</span>
             {% else %}
               <span class="chip chip--neutral">{{ showcase.category.name if showcase.category else 'Опитування' }}</span>
             {% endif %}
@@ -65,7 +65,7 @@
 
         <div class="hero__stamp" aria-hidden="true">
           <span class="hero__stamp-ring">{{ icon('check', 16) }}</span>
-          <span class="hero__stamp-text"><strong>Без реєстрації</strong>Посиланням можна поділитися</span>
+          <span class="hero__stamp-text"><strong>Чернетка зберігається</strong>Відповіді не загубляться</span>
         </div>
       {% endif %}
     </div>
@@ -88,7 +88,7 @@
           <div>
             <div class="survey-card__top">
               <span class="chip chip--soft">{{ survey.category.name if survey.category else 'Без теми' }}</span>
-              {% if survey.is_anonymous %}<span class="chip chip--positive">Анонімно</span>{% endif %}
+              {% if survey.is_anonymous %}<span class="chip chip--positive">Можна анонімно</span>{% endif %}
             </div>
             <h3>{{ survey.title }}</h3>
             <p class="survey-card__meta">
@@ -132,7 +132,7 @@
         </li>
         <li class="band__step">
           <span>02</span>
-          <div><strong>Поділіться посиланням</strong><p>Учасникам не потрібен акаунт. Анонімність — одним перемикачем.</p></div>
+          <div><strong>Поділіться посиланням</strong><p>Учасники входять у Kolo і самі обирають анонімність, якщо ви її дозволили.</p></div>
         </li>
         <li class="band__step">
           <span>03</span>

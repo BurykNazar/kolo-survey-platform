@@ -32,7 +32,7 @@
           <div class="survey-card__top">
             <span class="chip chip--soft">{{ survey.category.name if survey.category else 'Без теми' }}</span>
             {% if survey.is_anonymous %}
-              <span class="chip chip--positive">Анонімно</span>
+              <span class="chip chip--positive">Можна анонімно</span>
             {% endif %}
           </div>
           <h3>{{ survey.title }}</h3>
@@ -46,7 +46,7 @@
           </p>
         </div>
         <div class="survey-card__foot">
-          <span>{{ 'Заповнити анкету' if not survey.is_anonymous else 'Відповісти анонімно' }}</span>
+          <span>Відкрити анкету</span>
           <span class="survey-card__go">{{ icon('arrow-right', 16) }}</span>
         </div>
       </a>
