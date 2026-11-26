@@ -1,9 +1,10 @@
 import { Survey, SurveyCategory, Question, AnswerOption, SurveyResult } from '../db/models.js';
+import { activeSurveyWhere } from '../services/surveys.js';
 import { safeReturnTo } from '../lib/validation.js';
 
 export async function authShowcase() {
   const surveys = await Survey.findAll({
-    where: { status: 'active' },
+    where: activeSurveyWhere(),
     include: [
       { model: SurveyCategory, as: 'category' },
       { model: Question, as: 'questions', include: [{ model: AnswerOption, as: 'options' }] }

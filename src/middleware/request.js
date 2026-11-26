@@ -47,6 +47,7 @@ export function viewLocals(req, res, next) {
   };
   res.locals.year = new Date().getFullYear();
   res.locals.appName = 'Kolo';
+  res.locals.assetVersion = (process.env.RENDER_GIT_COMMIT || 'dev').slice(0, 8);
   next();
 }
 

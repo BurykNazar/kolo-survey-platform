@@ -4,34 +4,30 @@
 .catalog-head,
 .runner__head,
 .auth__body,
-.error-page > div {
-  animation: rise 380ms var(--ease-out) both;
+.error-page > div,
+.thanks,
+.closed {
+  animation: rise 380ms var(--ease-out) backwards;
 }
 
 .page-head__actions {
-  animation: rise 380ms var(--ease-out) 70ms both;
+  animation: rise 380ms var(--ease-out) 70ms backwards;
 }
 
-.cards-3 .survey-card,
-.catalog-grid .survey-card {
-  animation: rise 420ms var(--ease-out) both;
+.cards-3 .survey-card {
+  animation: rise 420ms var(--ease-out) backwards;
 }
 
-.cards-3 .survey-card:nth-child(2),
-.catalog-grid .survey-card:nth-child(2) { animation-delay: 50ms; }
-.cards-3 .survey-card:nth-child(3),
-.catalog-grid .survey-card:nth-child(3) { animation-delay: 100ms; }
-.catalog-grid .survey-card:nth-child(4) { animation-delay: 140ms; }
-.catalog-grid .survey-card:nth-child(5) { animation-delay: 180ms; }
-.catalog-grid .survey-card:nth-child(6) { animation-delay: 220ms; }
+.cards-3 .survey-card:nth-child(2) { animation-delay: 50ms; }
+.cards-3 .survey-card:nth-child(3) { animation-delay: 100ms; }
 
 .auth__card {
-  animation: rise 480ms var(--ease-out) 80ms both;
+  animation: rise 480ms var(--ease-out) 80ms backwards;
 }
 
 .chart__bar {
   transform-origin: bottom center;
-  animation: grow-bar 620ms var(--ease-out) both;
+  animation: grow-bar 620ms var(--ease-out) backwards;
 }
 
 .chart__col:nth-child(2) .chart__bar { animation-delay: 40ms; }
@@ -42,18 +38,9 @@
 .chart__col:nth-child(7) .chart__bar { animation-delay: 240ms; }
 
 .q {
-  animation: rise 320ms var(--ease-out) both;
+  animation: rise 320ms var(--ease-out) backwards;
   animation-delay: calc((var(--i, 1) - 1) * 35ms);
 }
-
-.qitem {
-  animation: rise 260ms var(--ease-out) both;
-}
-
-.qitem:nth-child(2) { animation-delay: 35ms; }
-.qitem:nth-child(3) { animation-delay: 70ms; }
-.qitem:nth-child(4) { animation-delay: 105ms; }
-.qitem:nth-child(5) { animation-delay: 140ms; }
 
 @keyframes grow-bar {
   from { transform: scaleY(0); }

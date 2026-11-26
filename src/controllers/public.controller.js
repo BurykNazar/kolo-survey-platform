@@ -33,8 +33,9 @@ export async function getLanding(req, res, next) {
     const ratingCandidates = ranked.filter((survey) =>
       survey.questions.some((question) => question.question_type === 'rating')
     );
-    const showcasePool = ratingCandidates.length > 0 ? ratingCandidates : ranked;
-    const showcase = showcasePool[Math.floor(Math.random() * showcasePool.length)] || null;
+    const showcase = ratingCandidates.length
+      ? ratingCandidates[Math.floor(Math.random() * ratingCandidates.length)]
+      : null;
     let showcaseQuestion = null;
     if (showcase) {
       showcaseQuestion =

@@ -97,7 +97,7 @@ app.use(express.urlencoded({ extended: true, limit: '256kb' }));
 
 app.use(
   express.static(path.join(__dirname, 'public'), {
-    maxAge: env.isProd ? '7d' : 0,
+    maxAge: env.isProd ? '1h' : 0,
     etag: true
   })
 );
